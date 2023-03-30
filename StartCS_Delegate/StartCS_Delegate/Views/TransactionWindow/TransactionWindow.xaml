@@ -1,0 +1,116 @@
+﻿<Window x:Class="StartCS_Delegate.Views.TransactionWindow.TransactionWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:StartCS_Delegate.Views.TransactionWindow"
+        xmlns:vm="clr-namespace:StartCS_Delegate.ViewModels"
+        mc:Ignorable="d"
+        Title="TransactionWindow" Height="450" Width="800">
+    <Window.DataContext>
+        <vm:MainWindowViewModel x:Name="ViewModel"/>
+    </Window.DataContext>
+    <Grid>
+        <DockPanel>
+            <Menu DockPanel.Dock="Top">
+                <MenuItem Header="Выход">
+                    <MenuItem Header="Выход" Command="{Binding Path=BackToManagerWindowCommand}"/>
+                </MenuItem>
+            </Menu>
+
+            <Grid ShowGridLines="True">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="100*"/>
+                    <RowDefinition Height="177*"/>
+                    <RowDefinition Height="140*"/>
+                </Grid.RowDefinitions>
+
+                <Border Grid.Row="0">
+                    <Canvas>
+                        <StackPanel Canvas.Left="124" Canvas.Top="10" HorizontalAlignment="Left" VerticalAlignment="Top" Width="153">
+                            <TextBlock Text="Check your ID"/>
+                            <TextBox Name="SearchBox"/>
+                        </StackPanel>
+                        <StackPanel Canvas.Left="472" Canvas.Top="10" HorizontalAlignment="Center" VerticalAlignment="Top">
+                            <TextBlock Text="Your balance NonDeposit"/>
+                            <TextBlock Name="FoundBalanceBlock"/>
+                        </StackPanel>
+                        <StackPanel Canvas.Left="646" Canvas.Top="10">
+                            <TextBlock Text="Your balance Deposit"/>
+                            <TextBlock x:Name="DepFoundBalanceBlock"/>
+                        </StackPanel>
+                        <Button Content="Search" Command="{Binding Path=SearchCommand}" Canvas.Left="309" Canvas.Top="24" HorizontalAlignment="Left" VerticalAlignment="Top" Width="79"/>
+                        <Button Content="Reset" Canvas.Left="573" Canvas.Top="65" HorizontalAlignment="Left" VerticalAlignment="Center" Width="90" Height="25"/>
+                    </Canvas>
+                </Border>
+
+                <Border Grid.Row="1" Margin="0,0,400,0" CornerRadius="8,8,3,3">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                            <GradientStop Color="Gray" Offset="0.0" />
+                            <GradientStop Color="LightBlue" Offset="0.5" />
+                            <GradientStop Color="DarkTurquoise" Offset="1.0" />
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <Canvas>
+                        <Button x:Name="NonDepButton" Content="UnDeposit" Command="{Binding Path=NonDepPlusCommand}" Canvas.Left="264" Canvas.Top="73"/>
+                        <TextBlock Text="Недепозитный счёт" Canvas.Left="143" Canvas.Top="10" HorizontalAlignment="Left" VerticalAlignment="Center" Width="114" Height="26"/>
+                        <TextBlock Canvas.Left="10" Canvas.Top="45">
+                            <Run Text="Account ID: "/>
+                            <TextBox x:Name="NonDepAccountIDBlock" Width="50"/>
+                        </TextBlock>
+                        <TextBlock Canvas.Left="10" Canvas.Top="88" HorizontalAlignment="Left" VerticalAlignment="Center">
+                            <Run Text="Amount: "/>
+                            <TextBox x:Name="NonDepAmountBlock" Width="50"/>
+                        </TextBlock>
+                    </Canvas>
+                </Border>
+
+                <Border Grid.Row="1" Margin="400,0,0,0" CornerRadius="8,8,3,3">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                            <GradientStop Color="Gray" Offset="0.0" />
+                            <GradientStop Color="AliceBlue" Offset="0.5" />
+                            <GradientStop Color="DarkTurquoise" Offset="1.0" />
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <Canvas>
+                        <TextBlock Text="Депозитный счёт" Canvas.Left="152" Canvas.Top="10"/>
+                        <TextBlock Canvas.Left="27" Canvas.Top="50">
+                            <Run Text="Account ID:"/> 
+                            <TextBox x:Name="DepAccountIDBlock" Width="50"/>
+                        </TextBlock>
+                        <TextBlock Canvas.Left="33" Canvas.Top="88">
+                            <Run Text="Amount: "/>
+                            <TextBox x:Name="DepAmountBlock" Width="50"/>
+                        </TextBlock>
+                        <Button Content="Deposit" Command="{Binding Path=DepositPlusCommand}" Canvas.Left="273" Canvas.Top="68" HorizontalAlignment="Center" VerticalAlignment="Top" Width="76" Height="30"/>
+                    </Canvas>
+                </Border>
+
+                <Border Grid.Row="2">
+                    <Canvas>
+                        <TextBlock Text="Transfer" Canvas.Left="350" Canvas.Top="10" HorizontalAlignment="Center" VerticalAlignment="Top" Width="90" Height="28"/>
+                        <TextBlock Canvas.Left="39" Canvas.Top="49">
+                            <Run Text="From: "/>
+                            <TextBox x:Name="FromAccountTransaction" Width="100"/>
+                        </TextBlock>
+                        <TextBlock Canvas.Left="39" Canvas.Top="93">
+                            <Run Text="To: "/>
+                            <TextBox x:Name="ToAccountTransaction" Width="100"/>
+                        </TextBlock>
+
+                        <Button Content="Search From" Canvas.Left="214" Canvas.Top="45"/>
+                        <Button Content="Search To" Canvas.Left="214" Canvas.Top="89"/>
+
+                        <TextBlock Canvas.Left="488" Canvas.Top="59">
+                            <Run Text="Amount: "/>
+                            <TextBox x:Name="TransactionAmountBlock" Width="100"/>
+                        </TextBlock>
+                        <Button x:Name="TransferButton" Command="{Binding Path=TransferCommand}" Content="Transfer" Canvas.Left="700" Canvas.Top="55"/>
+                    </Canvas>
+                </Border>
+            </Grid>
+        </DockPanel>
+    </Grid>
+</Window>
