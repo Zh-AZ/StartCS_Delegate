@@ -161,6 +161,16 @@ namespace StartCS_Delegate.ViewModels
                 {
                     TransactionWindow.FoundBalanceBlock.Text = client.Bill;
                     TransactionWindow.DepFoundBalanceBlock.Text = client.DepBill;
+                    if (client.DepBill == "Закрытый")
+                    {
+                        TransactionWindow.OpenDepositButton.Content = "Открыть";
+                    }
+                    else { TransactionWindow.OpenDepositButton.Content = "Закрыть"; }
+                    if (client.Bill == "Закрытый")
+                    {
+                        TransactionWindow.OpenNonDepositButton.Content = "Открыть";
+                    }
+                    else { TransactionWindow.OpenNonDepositButton.Content = "Закрыть"; }
                 }
                 //else { MessageBox.Show("Not Found!"); }
             }
@@ -204,7 +214,8 @@ namespace StartCS_Delegate.ViewModels
 
         private static int minusClientBalance;
         //private static bool ExistFromDepBill;
-        private static bool ExistToDepBill;
+        private static bool ExistToBill = true;
+        private static bool ExistToDepBill = true;
 
         public ICommand TransferCommand { get; }
         private bool CanTransferCommandExecute(object p) => true;
@@ -228,7 +239,7 @@ namespace StartCS_Delegate.ViewModels
 
             foreach (Client client in Clients)
             {
-                if (client.Bill == "Закрытый") { ExistToDepBill = false; }
+                if (client.Bill == "Закрытый") { ExistToBill = false; }
                 //if (client.Bill == "Закрытый") { MessageBox.Show("ToСчёт закрытый"); }
                 if (TransactionWindow.ToAccountTransaction.Text == client.ID && TransactionWindow.ToAccountTransaction.Text != String.Empty
                     && TransactionWindow.FromAccountTransaction.Text != String.Empty)
@@ -238,6 +249,79 @@ namespace StartCS_Delegate.ViewModels
                         int sums = int.Parse(client.Bill) + minusClientBalance;
                         client.Bill = Convert.ToString(sums);
                     }
+                }
+            }
+            XmlSerialize(Clients);
+        }
+
+        public ICommand DepTransferCommand { get; }
+        private bool CanDepTransferCommandExecute(object p) => true;
+        private void OnDepTransferCommandExecute(object p)
+        {
+            foreach (Client client in Clients)
+            {
+                if (TransactionWindow.FromAccountTransaction.Text == client.ID && TransactionWindow.FromAccountTransaction.Text != String.Empty
+                    && TransactionWindow.ToAccountTransaction.Text != String.Empty)
+                {
+                    if (TransactionWindow.DepTransactionAmountBlock.Text != String.Empty)
+                    {
+                        int minusSum = int.Parse(TransactionWindow.DepTransactionAmountBlock.Text);
+                        int sumsClientBalance = int.Parse(client.DepBill) - minusSum;
+                        client.DepBill = Convert.ToString(sumsClientBalance);
+                        minusClientBalance = minusSum;
+                    }
+                }
+            }
+
+            foreach (Client client in Clients)
+            { 
+                if (client.DepBill == "Закрытый") { ExistToDepBill = false; }
+
+                if (TransactionWindow.ToAccountTransaction.Text == client.ID && TransactionWindow.ToAccountTransaction.Text != String.Empty
+                    && TransactionWindow.FromAccountTransaction.Text != String.Empty)
+                {
+                    if (TransactionWindow.DepTransactionAmountBlock.Text != String.Empty && client.DepBill != "Закрытый")
+                    {
+                        int sums = int.Parse(client.DepBill) + minusClientBalance;
+                        client.DepBill = Convert.ToString(sums);
+                    }
+                    else { MessageBox.Show("Счёт клиента закрытый"); }
+                }
+            }
+            XmlSerialize(Clients);
+        }
+
+        public ICommand OpenDepositCommand { get; }
+        private bool CanOpenDepositCommandExecute(object p) => true;
+        private void OnOpenDepositCommandExecute(object p)
+        {
+            foreach (Client client in Clients)
+            {
+                if (TransactionWindow.SearchBox.Text == client.ID)
+                {
+                    if (client.DepBill == "Закрытый")
+                    {
+                        client.DepBill = "0";
+                    }
+                    else { client.DepBill = "Закрытый"; }
+                }
+            }
+            XmlSerialize(Clients);
+        }
+
+        public ICommand OpenNonDepositCommand { get; }
+        private bool CanOpenNonDepositCommandExecute(object p) => true;
+        private void OnOpenNonDepositCommandExecute(object p)
+        {
+            foreach (Client client in Clients)
+            {
+                if (TransactionWindow.SearchBox.Text == client.ID)
+                {
+                    if (client.Bill == "Закрытый")
+                    {
+                        client.Bill = "0";
+                    }
+                    else { client.Bill = "Закрыть"; }
                 }
             }
             XmlSerialize(Clients);
@@ -256,6 +340,9 @@ namespace StartCS_Delegate.ViewModels
             DepositPlusCommand = new LambdaCommand(OnDepositPlusCommandExecute, CanDepositPlusCommandExecute);
             SearchCommand = new LambdaCommand(OnSearchCommandExecute, CanSearchCommandExecute);
             TransferCommand = new LambdaCommand(OnTransferCommandExecute, CanTransferCommandExecute);
+            DepTransferCommand = new LambdaCommand(OnDepTransferCommandExecute, CanDepTransferCommandExecute);
+            OpenDepositCommand = new LambdaCommand(OnOpenDepositCommandExecute, CanOpenDepositCommandExecute);
+            OpenNonDepositCommand = new LambdaCommand(OnOpenNonDepositCommandExecute, CanOpenNonDepositCommandExecute);
 
             Clients = new ObservableCollection<Client>();
             //GenerationClient();

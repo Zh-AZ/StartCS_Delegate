@@ -24,17 +24,9 @@
                 </EventTrigger>
             </Button.Triggers>
         </Button>
-        <TextBox HorizontalAlignment="Left" Margin="124,22,0,0" FontSize="25" TextWrapping="Wrap" Text="Добро пожаловать! Банк А! Кто работает в системе?" 
+        <TextBlock HorizontalAlignment="Left" Margin="124,22,0,0" FontSize="25" TextWrapping="Wrap" Text="Добро пожаловать! Банк А! Кто работает в системе?" 
                  VerticalAlignment="Top" Width="615" RenderTransformOrigin="0.5,0.5" Height="69">
-            <TextBox.RenderTransform>
-                <TransformGroup>
-                    <ScaleTransform/>
-                    <SkewTransform/>
-                    <RotateTransform Angle="-0.043"/>
-                    <TranslateTransform/>
-                </TransformGroup>
-            </TextBox.RenderTransform>
-        </TextBox>
+        </TextBlock>
         <Button x:Name="Button_Copy" Content="Консультант" HorizontalAlignment="Left" Margin="480,203,0,0" VerticalAlignment="Top" Width="160" Height="53">
             <Button.Triggers>
                 <EventTrigger RoutedEvent="Button.Click">

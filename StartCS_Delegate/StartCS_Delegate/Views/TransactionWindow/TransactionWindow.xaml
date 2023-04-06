@@ -40,7 +40,8 @@
                             <TextBlock x:Name="DepFoundBalanceBlock"/>
                         </StackPanel>
                         <Button Content="Search" Command="{Binding Path=SearchCommand}" Canvas.Left="309" Canvas.Top="24" HorizontalAlignment="Left" VerticalAlignment="Top" Width="79"/>
-                        <Button Content="Reset" Canvas.Left="573" Canvas.Top="65" HorizontalAlignment="Left" VerticalAlignment="Center" Width="90" Height="25"/>
+                        <Button x:Name="OpenDepositButton" Command="{Binding Path=OpenDepositCommand}" Content="OpenDeposit" Canvas.Left="657" Canvas.Top="65" HorizontalAlignment="Left" VerticalAlignment="Center" Width="90" Height="25"/>
+                        <Button x:Name="OpenNonDepositButton" Content="OpenNonDeposit" Command="{Binding Path=OpenNonDepositCommand}" Canvas.Left="491" Canvas.Top="68"/>
                     </Canvas>
                 </Border>
 
@@ -103,11 +104,16 @@
                         <Button Content="Search From" Canvas.Left="214" Canvas.Top="45"/>
                         <Button Content="Search To" Canvas.Left="214" Canvas.Top="89"/>
 
-                        <TextBlock Canvas.Left="488" Canvas.Top="59">
-                            <Run Text="Amount: "/>
+                        <TextBlock Canvas.Left="489" Canvas.Top="45">
+                            <Run Text="AmountUnDeposit: "/>
                             <TextBox x:Name="TransactionAmountBlock" Width="100"/>
                         </TextBlock>
-                        <Button x:Name="TransferButton" Command="{Binding Path=TransferCommand}" Content="Transfer" Canvas.Left="700" Canvas.Top="55"/>
+                        <TextBlock Canvas.Left="489" Canvas.Top="86">
+                            <Run Text="AmountDeposit: "/>
+                            <TextBox x:Name="DepTransactionAmountBlock" Width="100"/>
+                        </TextBlock>
+                        <Button x:Name="DepTransferButton" Command="{Binding Path=DepTransferCommand}" Content="DepTransfer" Canvas.Left="701" Canvas.Top="84"/>
+                        <Button x:Name="TransferButton" Command="{Binding Path=TransferCommand}" Content="Transfer" Canvas.Left="701" Canvas.Top="45"/>
                     </Canvas>
                 </Border>
             </Grid>
