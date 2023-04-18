@@ -353,29 +353,30 @@ namespace StartCS_Delegate.ViewModels
             OpenNonDepositCommand = new LambdaCommand(OnOpenNonDepositCommandExecute, CanOpenNonDepositCommandExecute);
 
             Clients = new ObservableCollection<Client>();
+            Clients.CollectionChanged += ContentCollectionChanged;
             //Clients.CollectionChanged += MyCollection_CollectionChanged;
             if (File.Exists(path)){ XmlDeserialize(Clients); }
             else { GenerationClient(); }
         }
 
-        void MyCollection_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        public void ContentCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if (e.NewItems != null)
-            {
-                foreach (Client item in e.NewItems) 
-                {
-                    item.PropertyChanged += MyClass_PropertyChanged;
-                }
-            }
-            
-            if (e.OldItems != null)
+            if (e.Action == NotifyCollectionChangedAction.Remove)
             {
                 foreach (Client item in e.OldItems)
                 {
+                    //Removed items
                     item.PropertyChanged -= MyClass_PropertyChanged;
                 }
             }
-            ExecuteOnAnyChangeOfCollection();
+            else if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                foreach (Client item in e.NewItems)
+                {
+                    //Added items
+                    item.PropertyChanged += MyClass_PropertyChanged;
+                }
+            }
         }
 
         void MyClass_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -387,6 +388,26 @@ namespace StartCS_Delegate.ViewModels
         {
             MessageBox.Show("Collection has changed");
         }
+
+        //void MyCollection_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        //{
+        //    if (e.NewItems != null)
+        //    {
+        //        foreach (Client item in e.NewItems) 
+        //        {
+        //            item.PropertyChanged += MyClass_PropertyChanged;
+        //        }
+        //    }
+
+        //    if (e.OldItems != null)
+        //    {
+        //        foreach (Client item in e.OldItems)
+        //        {
+        //            item.PropertyChanged -= MyClass_PropertyChanged;
+        //        }
+        //    }
+        //    ExecuteOnAnyChangeOfCollection();
+        //}
 
         void GenerationClient()
         {
