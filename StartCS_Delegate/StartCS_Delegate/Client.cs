@@ -5,18 +5,23 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace StartCS_Delegate
 {
     public class Client : INotifyPropertyChanged
     {
+        public delegate void Notify<in T>(T arg);
+        public event Notify<MessageBoxResult> NotifyMessage;
+        
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            NotifyMessage?.Invoke(MessageBox.Show(propertyName));
         }
-
+        
         private string _ID;
         private string _Email;
         private string _Name;
@@ -26,7 +31,7 @@ namespace StartCS_Delegate
         private string _Address;
         private string _Bill;
         private string _DepBill;
-
+        
         public string ID
         {
             get => _ID;

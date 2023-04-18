@@ -19,6 +19,9 @@ using StartCS_Delegate.Views.ManagerWindow;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using System.IO;
+using StartCS_Delegate.Views.HistoryWindow;
+using System.Collections.Specialized;
+using System.ComponentModel;
 
 namespace StartCS_Delegate.ViewModels
 {
@@ -28,7 +31,8 @@ namespace StartCS_Delegate.ViewModels
         private MainWindow MainWindow;
         static ManagerWindow ManagerWindow;
         static TransactionWindow TransactionWindow;
-
+        static HistoryWindow HistoryWindow;
+        
         private static Client _Selected;
         public Client Selected
         {
@@ -121,6 +125,8 @@ namespace StartCS_Delegate.ViewModels
         private void OnChangeClientCommandExecute(object p)
         {
             XmlSerialize(Clients);
+            //HistoryWindow = new HistoryWindow();
+            //HistoryWindow.Show();
         }
 
         public ICommand ClearFocusCommand { get; }
@@ -229,10 +235,10 @@ namespace StartCS_Delegate.ViewModels
                 {
                     if (TransactionWindow.TransactionAmountBlock.Text != String.Empty)
                     {
-                        int minusSum = int.Parse(TransactionWindow.TransactionAmountBlock.Text);
-                        int sumsClientBalance = int.Parse(client.Bill) - minusSum;
-                        client.Bill = Convert.ToString(sumsClientBalance);
-                        minusClientBalance = minusSum;
+                        int amount = int.Parse(TransactionWindow.TransactionAmountBlock.Text);
+                        int clientBalance = int.Parse(client.Bill) - amount;
+                        client.Bill = Convert.ToString(clientBalance);
+                        minusClientBalance = amount;
                     }
                 }
             }
@@ -265,10 +271,10 @@ namespace StartCS_Delegate.ViewModels
                 {
                     if (TransactionWindow.DepTransactionAmountBlock.Text != String.Empty)
                     {
-                        int minusSum = int.Parse(TransactionWindow.DepTransactionAmountBlock.Text);
-                        int sumsClientBalance = int.Parse(client.DepBill) - minusSum;
-                        client.DepBill = Convert.ToString(sumsClientBalance);
-                        minusClientBalance = minusSum;
+                        int amount = int.Parse(TransactionWindow.DepTransactionAmountBlock.Text);
+                        int clientBalance = int.Parse(client.DepBill) - amount;
+                        client.DepBill = Convert.ToString(clientBalance);
+                        minusClientBalance = amount;
                     }
                 }
             }
@@ -327,6 +333,8 @@ namespace StartCS_Delegate.ViewModels
             XmlSerialize(Clients);
         }
 
+        string path = @"..\Debug\Client.xml"; //..\Publications\TravelBrochure.pdf
+
         public MainWindowViewModel()
         {
             OpenManagerWindowCommand = new LambdaCommand(OnOpenManagerWindowCommandExecute, CanOpenManagerWindowCommandExecute);
@@ -345,8 +353,39 @@ namespace StartCS_Delegate.ViewModels
             OpenNonDepositCommand = new LambdaCommand(OnOpenNonDepositCommandExecute, CanOpenNonDepositCommandExecute);
 
             Clients = new ObservableCollection<Client>();
-            //GenerationClient();
-            XmlDeserialize(Clients);
+            //Clients.CollectionChanged += MyCollection_CollectionChanged;
+            if (File.Exists(path)){ XmlDeserialize(Clients); }
+            else { GenerationClient(); }
+        }
+
+        void MyCollection_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (Client item in e.NewItems) 
+                {
+                    item.PropertyChanged += MyClass_PropertyChanged;
+                }
+            }
+            
+            if (e.OldItems != null)
+            {
+                foreach (Client item in e.OldItems)
+                {
+                    item.PropertyChanged -= MyClass_PropertyChanged;
+                }
+            }
+            ExecuteOnAnyChangeOfCollection();
+        }
+
+        void MyClass_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            ExecuteOnAnyChangeOfCollection();
+        }
+
+        private void ExecuteOnAnyChangeOfCollection()
+        {
+            MessageBox.Show("Collection has changed");
         }
 
         void GenerationClient()
@@ -379,21 +418,15 @@ namespace StartCS_Delegate.ViewModels
                     Faker.Name.Last(), Faker.Phone.Number(), Faker.Address.StreetName(), bill, depBill));
             }
             XmlSerialize(Clients);
-            XmlDeserialize(Clients);
         }
-
-        string path = @"..\Debug\Client.xml"; //..\Publications\TravelBrochure.pdf
 
         void XmlSerialize(ObservableCollection<Client> clients)
         {
-            if (File.Exists(path))
+            File.WriteAllText(path, String.Empty);
+            XmlSerializer xmlSerializer = new XmlSerializer(typeof(ObservableCollection<Client>));
+            using (FileStream fs = new FileStream(path, FileMode.OpenOrCreate))
             {
-                File.WriteAllText(path, String.Empty);
-                XmlSerializer xmlSerializer = new XmlSerializer(typeof(ObservableCollection<Client>));
-                using (FileStream fs = new FileStream(path, FileMode.OpenOrCreate))
-                {
-                    xmlSerializer.Serialize(fs, clients);
-                }
+                xmlSerializer.Serialize(fs, clients);
             }
         }
 
