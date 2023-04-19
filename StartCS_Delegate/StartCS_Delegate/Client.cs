@@ -19,7 +19,7 @@ namespace StartCS_Delegate
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            NotifyMessage?.Invoke(MessageBox.Show(propertyName));
+            NotifyMessage?.Invoke(MessageBox.Show($"Изменено {propertyName}"));
         }
         
         private string _ID;

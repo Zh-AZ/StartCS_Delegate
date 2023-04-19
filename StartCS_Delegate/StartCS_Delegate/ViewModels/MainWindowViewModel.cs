@@ -42,6 +42,11 @@ namespace StartCS_Delegate.ViewModels
 
         public void OnViewInitialized(MainWindow mainWindow) { MainWindow = mainWindow; }
 
+        #region Комманды
+
+        /// <summary>
+        /// Открытие окна для менеджера
+        /// </summary>
         public ICommand OpenManagerWindowCommand { get; }
         private bool CanOpenManagerWindowCommandExecute(object p) => true;
         private void OnOpenManagerWindowCommandExecute(object p)
@@ -59,6 +64,9 @@ namespace StartCS_Delegate.ViewModels
             }
         }
 
+        /// <summary>
+        /// Добавление новых клиентов
+        /// </summary>
         public ICommand CreateNewClientCommand { get; }
         private bool CanCreateNewClientCommandExecute(object p) => true;
         private void OnCreateNewClientCommandExecute(object p)
@@ -111,6 +119,9 @@ namespace StartCS_Delegate.ViewModels
             }
         }
 
+        /// <summary>
+        /// Удаление клиента
+        /// </summary>
         public ICommand DeleteClientCommand { get; }
         private bool CanDeleteClientCommandExecute(object p) => p is Client client && Clients.Contains(client);
         private void OnDeleteClientCommandExecute(object p)
@@ -120,6 +131,9 @@ namespace StartCS_Delegate.ViewModels
             XmlSerialize(Clients);
         }
 
+        /// <summary>
+        /// Сохранение изменений клииента
+        /// </summary>
         public ICommand ChangeClientCommand { get; }
         private bool CanChangeClientCommandExecute(object p) => p is Client client && Clients.Contains(client);
         private void OnChangeClientCommandExecute(object p)
@@ -129,6 +143,9 @@ namespace StartCS_Delegate.ViewModels
             //HistoryWindow.Show();
         }
 
+        /// <summary>
+        /// Убрать фокус с выбранных элементов при нажатии на пустое пространство
+        /// </summary>
         public ICommand ClearFocusCommand { get; }
         private bool CanClearFocusCommadExecute(object p) => true;
         private void OnClearFocusCommandExecute(object p)
@@ -139,6 +156,9 @@ namespace StartCS_Delegate.ViewModels
             }
         }
 
+        /// <summary>
+        /// Открыть окно перевода счетов
+        /// </summary>
         public ICommand OpenTransactionWindowCommand { get; }
         private bool CanOpenTransactionrWindowCommandExecute(object p) => true;
         private void OnOpenTransactionWindowCommandExecute(object p)
@@ -148,6 +168,9 @@ namespace StartCS_Delegate.ViewModels
             TransactionWindow.Show();
         }
 
+        /// <summary>
+        /// Назад в окно менеджера
+        /// </summary>
         public ICommand BackToManagerWindowCommand { get; }
         private bool CanBackToManagerWindowCommandExecute(object p) => true;
         private void OnBackToManagerWindowCommandExecute(object p)
@@ -157,6 +180,9 @@ namespace StartCS_Delegate.ViewModels
             ManagerWindow.Show();
         }
 
+        /// <summary>
+        /// Поиск клиента по ID 
+        /// </summary>
         public ICommand SearchCommand { get; }
         private bool CanSearchCommandExecute(object p) => true;
         private void OnSearchCommandExecute(object p)
@@ -182,6 +208,9 @@ namespace StartCS_Delegate.ViewModels
             }
         }
 
+        /// <summary>
+        /// Пополнение счёта найденного по ID клиента 
+        /// </summary>
         public ICommand NonDepPlusCommand { get; }
         private bool CanNonDepPlusCommandExecute(object p) => true;
         private void OnNonDepPlusCommandExecute(object p)
@@ -200,6 +229,9 @@ namespace StartCS_Delegate.ViewModels
             XmlSerialize(Clients);
         }
 
+        /// <summary>
+        /// Пополнение депозитного счёта найденного по ID клиента 
+        /// </summary>
         public ICommand DepositPlusCommand { get; }
         private bool CanDepositPlusCommandExecute(object p) => true;
         private void OnDepositPlusCommandExecute(object p)
@@ -223,6 +255,9 @@ namespace StartCS_Delegate.ViewModels
         private static bool ExistToBill = true;
         private static bool ExistToDepBill = true;
 
+        /// <summary>
+        /// Перевод счёта от найденного по ID клиента к другому
+        /// </summary>
         public ICommand TransferCommand { get; }
         private bool CanTransferCommandExecute(object p) => true;
         private void OnTransferCommandExecute(object p)
@@ -260,6 +295,9 @@ namespace StartCS_Delegate.ViewModels
             XmlSerialize(Clients);
         }
 
+        /// <summary>
+        /// Перевод депозитного счёта от найденного по ID клиента к другому
+        /// </summary>
         public ICommand DepTransferCommand { get; }
         private bool CanDepTransferCommandExecute(object p) => true;
         private void OnDepTransferCommandExecute(object p)
@@ -297,7 +335,10 @@ namespace StartCS_Delegate.ViewModels
             XmlSerialize(Clients);
         }
 
-        public ICommand OpenDepositCommand { get; }
+        /// <summary>
+        /// Открытие или закрытие депозитного счёта найденного по ID клиенту
+        /// </summary>
+        public ICommand OpenOrCloseDepositCommand { get; }
         private bool CanOpenDepositCommandExecute(object p) => true;
         private void OnOpenDepositCommandExecute(object p)
         {
@@ -315,7 +356,10 @@ namespace StartCS_Delegate.ViewModels
             XmlSerialize(Clients);
         }
 
-        public ICommand OpenNonDepositCommand { get; }
+        /// <summary>
+        /// Открытие или закрытие счёта найденного по ID клиенту
+        /// </summary>
+        public ICommand OpenOrCloseNonDepositCommand { get; }
         private bool CanOpenNonDepositCommandExecute(object p) => true;
         private void OnOpenNonDepositCommandExecute(object p)
         {
@@ -333,6 +377,8 @@ namespace StartCS_Delegate.ViewModels
             XmlSerialize(Clients);
         }
 
+        #endregion
+
         string path = @"..\Debug\Client.xml"; //..\Publications\TravelBrochure.pdf
 
         public MainWindowViewModel()
@@ -349,8 +395,8 @@ namespace StartCS_Delegate.ViewModels
             SearchCommand = new LambdaCommand(OnSearchCommandExecute, CanSearchCommandExecute);
             TransferCommand = new LambdaCommand(OnTransferCommandExecute, CanTransferCommandExecute);
             DepTransferCommand = new LambdaCommand(OnDepTransferCommandExecute, CanDepTransferCommandExecute);
-            OpenDepositCommand = new LambdaCommand(OnOpenDepositCommandExecute, CanOpenDepositCommandExecute);
-            OpenNonDepositCommand = new LambdaCommand(OnOpenNonDepositCommandExecute, CanOpenNonDepositCommandExecute);
+            OpenOrCloseDepositCommand = new LambdaCommand(OnOpenDepositCommandExecute, CanOpenDepositCommandExecute);
+            OpenOrCloseNonDepositCommand = new LambdaCommand(OnOpenNonDepositCommandExecute, CanOpenNonDepositCommandExecute);
 
             Clients = new ObservableCollection<Client>();
             Clients.CollectionChanged += ContentCollectionChanged;
