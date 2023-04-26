@@ -1,9 +1,13 @@
-﻿using System;
+﻿using StartCS_Delegate.Views.HistoryWindow;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -18,8 +22,26 @@ namespace StartCS_Delegate
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            NotifyMessage?.Invoke(MessageBox.Show($"Изменено {propertyName}"));
+            if (PropertyChanged != null) 
+            {
+                PropertyChangedEventArgs args = new PropertyChangedEventArgs(propertyName);
+                PropertyChanged(this, args);
+
+                if (args.PropertyName != "ItemSource")
+                {
+                    //await Task.Run(() => MessageBox.Show($"Изменено {propertyName}"));
+                    //NotifyMessage?.Invoke(MessageBox.Show($"Изменено {propertyName}"));
+                    //MessageBox.Show($"Изменено {propertyName}");                   
+                    HistoryWindow historyWindow = new HistoryWindow();
+                    historyWindow.HistoryBlock.Text = $"Изменено {propertyName}";
+                    historyWindow.ShowDialog();
+                    //Thread.Sleep(1000);
+                    //historyWindow.Close();
+                }
+            }
+            //PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            //NotifyMessage?.Invoke(MessageBox.Show($"Изменено {propertyName}"));
+            //MessageBox.Show($"Изменено {propertyName}");
         }
         
         private string _ID;

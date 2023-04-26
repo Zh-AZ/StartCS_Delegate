@@ -6,10 +6,11 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace StartCS_Delegate
 {
-    public class FullyObservableCollection<T> : ObservableCollection<T>
+    public class FullyObservableCollection<T> : System.Collections.ObjectModel.ObservableCollection<T>
         where T : INotifyPropertyChanged
     {
         /// <summary>
@@ -82,6 +83,7 @@ namespace StartCS_Delegate
                 throw new ArgumentException("Received property notification from item not in collection");
 
             OnItemPropertyChanged(i, e);
+            MessageBox.Show("Changed");
         }
     }
 

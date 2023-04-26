@@ -1,15 +1,18 @@
-﻿using System;
+﻿using StartCS_Delegate.Views.HistoryWindow;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace StartCS_Delegate
 {
-    public sealed class TrulyObservableCollection<T> : ObservableCollection<T>
+    public sealed class TrulyObservableCollection<T> : ObservableCollection<T>, INotifyPropertyChanged
     where T : INotifyPropertyChanged
     {
         public TrulyObservableCollection()
@@ -47,6 +50,13 @@ namespace StartCS_Delegate
         {
             NotifyCollectionChangedEventArgs args = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, sender, sender, IndexOf((T)sender));
             OnCollectionChanged(args);
+            //await ExecuteOnAnyChangeOfCollection();
+            //MessageBox.Show("Collection has changed");
+        }
+
+        private async Task ExecuteOnAnyChangeOfCollection()
+        {
+            await Task.Run(() => MessageBox.Show("Collection has changed"));
         }
     }
 }

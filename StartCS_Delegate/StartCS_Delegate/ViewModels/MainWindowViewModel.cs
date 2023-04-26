@@ -22,11 +22,15 @@ using System.IO;
 using StartCS_Delegate.Views.HistoryWindow;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Security.Cryptography;
+using System.Runtime.CompilerServices;
 
 namespace StartCS_Delegate.ViewModels
 {
     internal class MainWindowViewModel : ViewModel
     {
+        //public static TrulyObservableCollection<Client> Clients { get; set; }
+        //public static FullyObservableCollection<Client> Clients { get; set; }
         public static ObservableCollection<Client> Clients { get; set; }
         private MainWindow MainWindow;
         static ManagerWindow ManagerWindow;
@@ -136,9 +140,15 @@ namespace StartCS_Delegate.ViewModels
         /// </summary>
         public ICommand ChangeClientCommand { get; }
         private bool CanChangeClientCommandExecute(object p) => p is Client client && Clients.Contains(client);
-        private void OnChangeClientCommandExecute(object p)
+        async private void OnChangeClientCommandExecute(object p)
         {
-            XmlSerialize(Clients);
+            async Task SerializeAsync()
+            {
+                await Task.Run(() => { XmlSerialize(Clients); });
+            }
+            await SerializeAsync();
+            //XmlSerialize(Clients);
+
             //HistoryWindow = new HistoryWindow();
             //HistoryWindow.Show();
         }
@@ -398,9 +408,10 @@ namespace StartCS_Delegate.ViewModels
             OpenOrCloseDepositCommand = new LambdaCommand(OnOpenDepositCommandExecute, CanOpenDepositCommandExecute);
             OpenOrCloseNonDepositCommand = new LambdaCommand(OnOpenNonDepositCommandExecute, CanOpenNonDepositCommandExecute);
 
+            //Clients = new TrulyObservableCollection<Client>();
+            //Clients = new FullyObservableCollection<Client>();
             Clients = new ObservableCollection<Client>();
-            Clients.CollectionChanged += ContentCollectionChanged;
-            //Clients.CollectionChanged += MyCollection_CollectionChanged;
+            //Clients.CollectionChanged += ContentCollectionChanged;
             if (File.Exists(path)){ XmlDeserialize(Clients); }
             else { GenerationClient(); }
         }
