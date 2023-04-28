@@ -37,6 +37,7 @@
                         </Border.Background>
                         <Canvas>
                             <Button Content="TransferWindow" Command="{Binding Path=OpenTransactionWindowCommand}" Canvas.Left="503" Canvas.Top="1"/>
+                            <Button Content="HistoryWindow" Command="{Binding Path=OpenHistoryWindowCommand}" Canvas.Left="503" Canvas.Top="56"/>
                             <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Canvas.Top="10" Canvas.Left="10">
                                 <TextBlock Text="ID"/>
                                 <TextBox Name="IDBox" Width="100" Height="30" Text="{Binding ElementName=myListView, Path=SelectedItem.ID}"/>

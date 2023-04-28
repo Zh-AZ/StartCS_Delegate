@@ -40,8 +40,8 @@
                             <TextBlock x:Name="DepFoundBalanceBlock"/>
                         </StackPanel>
                         <Button Content="Search" Command="{Binding Path=SearchCommand}" Canvas.Left="309" Canvas.Top="24" HorizontalAlignment="Left" VerticalAlignment="Top" Width="79"/>
-                        <Button x:Name="OpenDepositButton" Command="{Binding Path=OpenDepositCommand}" Content="OpenDeposit" Canvas.Left="657" Canvas.Top="65" HorizontalAlignment="Left" VerticalAlignment="Center" Width="90" Height="25"/>
-                        <Button x:Name="OpenNonDepositButton" Content="OpenNonDeposit" Command="{Binding Path=OpenNonDepositCommand}" Canvas.Left="491" Canvas.Top="68"/>
+                        <Button x:Name="OpenDepositButton" Command="{Binding Path=OpenOrCloseDepositCommand}" Content="OpenDeposit" Canvas.Left="657" Canvas.Top="65" HorizontalAlignment="Left" VerticalAlignment="Center" Width="90" Height="25"/>
+                        <Button x:Name="OpenNonDepositButton" Content="OpenNonDeposit" Command="{Binding Path=OpenOrCloseNonDepositCommand}" Canvas.Left="491" Canvas.Top="68"/>
                     </Canvas>
                 </Border>
 

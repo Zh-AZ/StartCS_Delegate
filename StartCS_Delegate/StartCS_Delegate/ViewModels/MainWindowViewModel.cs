@@ -20,10 +20,12 @@ using System.Xml.Linq;
 using System.Xml.Serialization;
 using System.IO;
 using StartCS_Delegate.Views.HistoryWindow;
+using StartCS_Delegate.Views.MessageWindow;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Security.Cryptography;
 using System.Runtime.CompilerServices;
+using System.Data;
 
 namespace StartCS_Delegate.ViewModels
 {
@@ -36,6 +38,7 @@ namespace StartCS_Delegate.ViewModels
         static ManagerWindow ManagerWindow;
         static TransactionWindow TransactionWindow;
         static HistoryWindow HistoryWindow;
+        static MessageWindow MessageWindow;
         
         private static Client _Selected;
         public Client Selected
@@ -179,6 +182,29 @@ namespace StartCS_Delegate.ViewModels
         }
 
         /// <summary>
+        /// Открыть окно истории
+        /// </summary>
+        public ICommand OpenHistoryWindowCommand { get; }
+        private bool CanOpenHistoryWindowCommandExecute(object p) => true;
+        private async void OnOpenHistoryWindowCommandExecute(object p)
+        {
+            HistoryWindow = new HistoryWindow();
+            HistoryWindow.HistoryBlock.Text = await ReadToFileHistoryLog();
+            ManagerWindow.Close();
+            HistoryWindow.Show();
+        }
+
+        //string historyPath = @"..\Debug\HistoryLog.txt";
+        //async Task<string> ReadToFileHistoryLog()
+        //{
+        //    using (StreamReader sr = new StreamReader(historyPath))
+        //    {
+        //        string text = await sr.ReadToEndAsync();
+        //        return text;
+        //    }
+        //}
+
+        /// <summary>
         /// Назад в окно менеджера
         /// </summary>
         public ICommand BackToManagerWindowCommand { get; }
@@ -225,6 +251,7 @@ namespace StartCS_Delegate.ViewModels
         private bool CanNonDepPlusCommandExecute(object p) => true;
         private void OnNonDepPlusCommandExecute(object p)
         {
+            MessageWindow = new MessageWindow();
             foreach (Client client in Clients)
             {
                 if (TransactionWindow.NonDepAccountIDBlock.Text == client.ID && client.Bill != "Закрытый")
@@ -233,11 +260,24 @@ namespace StartCS_Delegate.ViewModels
                     {
                         int sums = int.Parse(client.Bill) + int.Parse(TransactionWindow.NonDepAmountBlock.Text);
                         client.Bill = Convert.ToString(sums);
+                        MessageWindow.MessageBlock.Text = $"счёт {client} пополнен";
+                        WriteToFileHistoryLog(MessageWindow.MessageBlock.Text.ToString());
+                        MessageWindow.ShowDialog();
                     }
                 }
             }
             XmlSerialize(Clients);
         }
+
+        //string historyLogPath = @"..\Debug\HistoryLog.txt";
+
+        //async void WriteToFileHistoryLog(string propertyName)
+        //{
+        //    using (StreamWriter sw = new StreamWriter(historyLogPath, true))
+        //    {
+        //        await sw.WriteLineAsync($"Изменено {propertyName}");
+        //    }
+        //}
 
         /// <summary>
         /// Пополнение депозитного счёта найденного по ID клиента 
@@ -246,6 +286,7 @@ namespace StartCS_Delegate.ViewModels
         private bool CanDepositPlusCommandExecute(object p) => true;
         private void OnDepositPlusCommandExecute(object p)
         {
+            MessageWindow = new MessageWindow();
             foreach (Client client in Clients)
             {
                 if (TransactionWindow.DepAccountIDBlock.Text == client.ID && client.DepBill != "Закрытый")
@@ -254,6 +295,9 @@ namespace StartCS_Delegate.ViewModels
                     {
                         int sums = int.Parse(client.DepBill) + int.Parse(TransactionWindow.DepAmountBlock.Text);
                         client.DepBill = Convert.ToString(sums);
+                        MessageWindow.MessageBlock.Text = $"депозитный счёт {client} пополнен";
+                        WriteToFileHistoryLog(MessageWindow.MessageBlock.Text.ToString());
+                        MessageWindow.ShowDialog();
                     }
                 }
             }
@@ -264,6 +308,8 @@ namespace StartCS_Delegate.ViewModels
         //private static bool ExistFromDepBill;
         private static bool ExistToBill = true;
         private static bool ExistToDepBill = true;
+        private static Client dataNonDepositClient;
+        private static Client dataDepositClient;
 
         /// <summary>
         /// Перевод счёта от найденного по ID клиента к другому
@@ -272,6 +318,7 @@ namespace StartCS_Delegate.ViewModels
         private bool CanTransferCommandExecute(object p) => true;
         private void OnTransferCommandExecute(object p)
         {
+            MessageWindow = new MessageWindow();
             foreach (Client client in Clients)
             {
                 //if (client.Bill == "Закрытый") { MessageBox.Show("FromСчёт закрытый"); }
@@ -284,6 +331,8 @@ namespace StartCS_Delegate.ViewModels
                         int clientBalance = int.Parse(client.Bill) - amount;
                         client.Bill = Convert.ToString(clientBalance);
                         minusClientBalance = amount;
+
+                        dataNonDepositClient = client;
                     }
                 }
             }
@@ -299,6 +348,10 @@ namespace StartCS_Delegate.ViewModels
                     {
                         int sums = int.Parse(client.Bill) + minusClientBalance;
                         client.Bill = Convert.ToString(sums);
+
+                        MessageWindow.MessageBlock.Text = $"счёт переведен от {dataNonDepositClient} к {client} количесвто {minusClientBalance}";
+                        WriteToFileHistoryLog(MessageWindow.MessageBlock.Text.ToString());
+                        MessageWindow.ShowDialog();
                     }
                 }
             }
@@ -312,6 +365,7 @@ namespace StartCS_Delegate.ViewModels
         private bool CanDepTransferCommandExecute(object p) => true;
         private void OnDepTransferCommandExecute(object p)
         {
+            MessageWindow = new MessageWindow();
             foreach (Client client in Clients)
             {
                 if (TransactionWindow.FromAccountTransaction.Text == client.ID && TransactionWindow.FromAccountTransaction.Text != String.Empty
@@ -323,6 +377,8 @@ namespace StartCS_Delegate.ViewModels
                         int clientBalance = int.Parse(client.DepBill) - amount;
                         client.DepBill = Convert.ToString(clientBalance);
                         minusClientBalance = amount;
+
+                        dataDepositClient = client;
                     }
                 }
             }
@@ -338,6 +394,9 @@ namespace StartCS_Delegate.ViewModels
                     {
                         int sums = int.Parse(client.DepBill) + minusClientBalance;
                         client.DepBill = Convert.ToString(sums);
+                        MessageWindow.MessageBlock.Text = $"депозитный счёт переведен от {dataDepositClient} к {client} количесвто {minusClientBalance}";
+                        WriteToFileHistoryLog(MessageWindow.MessageBlock.Text.ToString());
+                        MessageWindow.ShowDialog();
                     }
                     else { MessageBox.Show("Счёт клиента закрытый"); }
                 }
@@ -352,6 +411,7 @@ namespace StartCS_Delegate.ViewModels
         private bool CanOpenDepositCommandExecute(object p) => true;
         private void OnOpenDepositCommandExecute(object p)
         {
+            MessageWindow = new MessageWindow();
             foreach (Client client in Clients)
             {
                 if (TransactionWindow.SearchBox.Text == client.ID)
@@ -359,13 +419,22 @@ namespace StartCS_Delegate.ViewModels
                     if (client.DepBill == "Закрытый")
                     {
                         client.DepBill = "0";
+                        MessageWindow.MessageBlock.Text = $"депозитный счёт {client} открыт";
+                        WriteToFileHistoryLog(MessageWindow.MessageBlock.Text.ToString());
+                        MessageWindow.ShowDialog();
                     }
-                    else { client.DepBill = "Закрытый"; }
+                    else 
+                    { 
+                        client.DepBill = "Закрытый";
+                        MessageWindow.MessageBlock.Text = $"депозитный счёт {client} закрыт";
+                        WriteToFileHistoryLog(MessageWindow.MessageBlock.Text.ToString());
+                        MessageWindow.ShowDialog();
+                    }
                 }
             }
             XmlSerialize(Clients);
         }
-
+         
         /// <summary>
         /// Открытие или закрытие счёта найденного по ID клиенту
         /// </summary>
@@ -373,6 +442,7 @@ namespace StartCS_Delegate.ViewModels
         private bool CanOpenNonDepositCommandExecute(object p) => true;
         private void OnOpenNonDepositCommandExecute(object p)
         {
+            MessageWindow = new MessageWindow();
             foreach (Client client in Clients)
             {
                 if (TransactionWindow.SearchBox.Text == client.ID)
@@ -380,8 +450,17 @@ namespace StartCS_Delegate.ViewModels
                     if (client.Bill == "Закрытый")
                     {
                         client.Bill = "0";
+                        MessageWindow.MessageBlock.Text = $"счёт {client} открыт";
+                        WriteToFileHistoryLog(MessageWindow.MessageBlock.Text.ToString());
+                        MessageWindow.ShowDialog();
                     }
-                    else { client.Bill = "Закрыть"; }
+                    else 
+                    {
+                        client.Bill = "Закрытый";
+                        MessageWindow.MessageBlock.Text = $"счёт {client} закрыт";
+                        WriteToFileHistoryLog(MessageWindow.MessageBlock.Text.ToString());
+                        MessageWindow.ShowDialog();
+                    }
                 }
             }
             XmlSerialize(Clients);
@@ -389,11 +468,32 @@ namespace StartCS_Delegate.ViewModels
 
         #endregion
 
+        string historyLogPath = @"..\Debug\HistoryLog.txt";
+
+        async void WriteToFileHistoryLog(string propertyName)
+        {
+            using (StreamWriter sw = new StreamWriter(historyLogPath, true))
+            {
+                await sw.WriteLineAsync($"{ propertyName} ВРЕМЯ {DateTime.Now}");
+            }
+        }
+
+        string historyPath = @"..\Debug\HistoryLog.txt";
+        async Task<string> ReadToFileHistoryLog()
+        {
+            using (StreamReader sr = new StreamReader(historyPath))
+            {
+                string text = await sr.ReadToEndAsync();
+                return text;
+            }
+        }
+
         string path = @"..\Debug\Client.xml"; //..\Publications\TravelBrochure.pdf
 
         public MainWindowViewModel()
         {
             OpenManagerWindowCommand = new LambdaCommand(OnOpenManagerWindowCommandExecute, CanOpenManagerWindowCommandExecute);
+            OpenHistoryWindowCommand = new LambdaCommand(OnOpenHistoryWindowCommandExecute, CanOpenHistoryWindowCommandExecute);
             CreateNewClientCommand = new LambdaCommand(OnCreateNewClientCommandExecute, CanCreateNewClientCommandExecute);
             DeleteClientCommand = new LambdaCommand(OnDeleteClientCommandExecute, CanDeleteClientCommandExecute);
             ChangeClientCommand = new LambdaCommand(OnChangeClientCommandExecute, CanChangeClientCommandExecute);

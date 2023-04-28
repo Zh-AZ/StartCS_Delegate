@@ -10,6 +10,11 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using StartCS_Delegate.Views.MessageWindow;
+using StartCS_Delegate.Views.ManagerWindow;
+using System.Windows.Input;
+using StartCS_Delegate.Infrastructure.Commands;
+using System.IO;
 
 namespace StartCS_Delegate
 {
@@ -17,6 +22,16 @@ namespace StartCS_Delegate
     {
         public delegate void Notify<in T>(T arg);
         public event Notify<MessageBoxResult> NotifyMessage;
+        //static HistoryWindow HistoryWindow;
+
+        //public ICommand OpenHistoryWindowCommand { get; set; }
+        //private bool CanOpenHistoryWindowCommandExecute(object p) => true;
+        //private void OnOpenHistoryWindowCommandExecute(object p)
+        //{
+        //    HistoryWindow = new HistoryWindow();
+        //    ManagerWindow.Close();
+        //    HistoryWindow.Show();
+        //}
         
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -31,10 +46,13 @@ namespace StartCS_Delegate
                 {
                     //await Task.Run(() => MessageBox.Show($"Изменено {propertyName}"));
                     //NotifyMessage?.Invoke(MessageBox.Show($"Изменено {propertyName}"));
-                    //MessageBox.Show($"Изменено {propertyName}");                   
-                    HistoryWindow historyWindow = new HistoryWindow();
-                    historyWindow.HistoryBlock.Text = $"Изменено {propertyName}";
-                    historyWindow.ShowDialog();
+                    //MessageBox.Show($"Изменено {propertyName}");
+                    WriteToFileHistoryLog(propertyName);
+                    MessageWindow messageWindow = new MessageWindow();
+                    messageWindow.MessageBlock.Text = $"Изменено {propertyName}";
+                    messageWindow.ShowDialog();
+                    //HistoryWindow historyWindow = new HistoryWindow();
+                    //historyWindow.HistoryBlock.Text += $"Изменено {propertyName}";
                     //Thread.Sleep(1000);
                     //historyWindow.Close();
                 }
@@ -43,7 +61,16 @@ namespace StartCS_Delegate
             //NotifyMessage?.Invoke(MessageBox.Show($"Изменено {propertyName}"));
             //MessageBox.Show($"Изменено {propertyName}");
         }
-        
+
+        string path = @"..\Debug\HistoryLog.txt"; //string path = @"..\Debug\Client.xml";
+        async void WriteToFileHistoryLog(string propertyName)
+        {
+            using (StreamWriter  sw = new StreamWriter(path, true)) 
+            {
+                await sw.WriteLineAsync($"Изменено {propertyName}");
+            }
+        }
+
         private string _ID;
         private string _Email;
         private string _Name;
@@ -167,6 +194,13 @@ namespace StartCS_Delegate
             Address = address;
             Bill = bill;
             DepBill = depBill;
+
+            //OpenHistoryWindowCommand = new LambdaCommand(OnOpenHistoryWindowCommandExecute, CanOpenHistoryWindowCommandExecute);
+        }
+
+        public override string ToString() 
+        {
+            return String.Concat($"{ID} {Email} {Name} {Surname} {Patronymic} {NumberPhone} {Address}");
         }
     }
 }
