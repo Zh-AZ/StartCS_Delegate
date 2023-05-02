@@ -138,22 +138,36 @@ namespace StartCS_Delegate.ViewModels
             XmlSerialize(Clients);
         }
 
+        private delegate void SerializeXml(ObservableCollection<Client> client);
+        Mutex mutex = new Mutex();
         /// <summary>
         /// Сохранение изменений клииента
         /// </summary>
         public ICommand ChangeClientCommand { get; }
-        private bool CanChangeClientCommandExecute(object p) => p is Client client && Clients.Contains(client);
-        async private void OnChangeClientCommandExecute(object p)
+        private bool CanChangeClientCommandExecute(object p) => true; //p is Client client && Clients.Contains(client);
+        private void OnChangeClientCommandExecute(object p)
         {
-            async Task SerializeAsync()
-            {
-                await Task.Run(() => { XmlSerialize(Clients); });
-            }
-            await SerializeAsync();
-            //XmlSerialize(Clients);
+            //async Task SerializeAsync()
+            //{
+            //    await Task.Run(() => { XmlSerialize(Clients); });
+            //}
+            //await SerializeAsync();
+            //await Task.Run(() => { XmlSerialize(Clients); });
 
-            //HistoryWindow = new HistoryWindow();
-            //HistoryWindow.Show();
+            //SerializeXml serializeXml = XmlSerialize;
+            //Thread serializeThread = new Thread(new SerializeXml(XmlSerialize));
+            //Thread serializeThread = new Thread(serializeXml);
+            //serializeThread.Start(Clients);
+
+            Thread serializeThread = new Thread(() => XmlSerialize(Clients));
+            serializeThread.Start();
+
+            //XmlSerialize(Clients);
+        }
+
+        async Task SerializeAsync()
+        {
+            await Task.Run(() => { XmlSerialize(Clients); });
         }
 
         /// <summary>
@@ -574,7 +588,7 @@ namespace StartCS_Delegate.ViewModels
             bool depBillRandomBool;
             int billRandValue;
             int depBillRandValue;
-            int value = random.Next(1, 6);
+            int value = random.Next(5, 11);
             string depBill;
             string bill;
 
@@ -598,14 +612,16 @@ namespace StartCS_Delegate.ViewModels
             XmlSerialize(Clients);
         }
 
-        void XmlSerialize(ObservableCollection<Client> clients)
+        public void XmlSerialize(ObservableCollection<Client> clients)
         {
+            mutex.WaitOne();
             File.WriteAllText(path, String.Empty);
             XmlSerializer xmlSerializer = new XmlSerializer(typeof(ObservableCollection<Client>));
             using (FileStream fs = new FileStream(path, FileMode.OpenOrCreate))
             {
                 xmlSerializer.Serialize(fs, clients);
             }
+            mutex.ReleaseMutex();
         }
 
         void XmlDeserialize(ObservableCollection<Client> clients)
