@@ -11,6 +11,12 @@
         <vm:MainWindowViewModel x:Name="ViewModel"/>
     </Window.DataContext>
     <Grid>
-        <TextBlock x:Name="HistoryBlock" Text="Истории нет"/>
+        <!--<ScrollViewer>
+            <TextBlock x:Name="HistoryBlock" Text="Истории нет"/>
+        </ScrollViewer>-->
+        <!--<ListBox x:Name="HistoryKistBox"/>-->
+        <ItemsControl x:Name="HistoryControl"/>
+        <Button Content="Exit" Command="{Binding Path=BackToManagerWindowCommand}" HorizontalAlignment="Left" Margin="697,10,0,0" VerticalAlignment="Top" Width="93" Height="26"/>
+        <Button Content="Clear" Command="{Binding Path=ClearHistoryCommand}" HorizontalAlignment="Left" Margin="697,41,0,0" VerticalAlignment="Top" Width="93" Height="26"/>
     </Grid>
 </Window>

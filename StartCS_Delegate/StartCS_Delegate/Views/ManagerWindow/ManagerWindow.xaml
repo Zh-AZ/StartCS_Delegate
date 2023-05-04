@@ -36,8 +36,21 @@
                             </LinearGradientBrush>
                         </Border.Background>
                         <Canvas>
-                            <Button Content="TransferWindow" Command="{Binding Path=OpenTransactionWindowCommand}" Canvas.Left="503" Canvas.Top="1"/>
+                            <Button x:Name="OpenTransferWindowButton" Content="TransferWindow" Command="{Binding Path=OpenTransactionWindowCommand}" Canvas.Left="503" Canvas.Top="1"/>
                             <Button Content="HistoryWindow" Command="{Binding Path=OpenHistoryWindowCommand}" Canvas.Left="503" Canvas.Top="56"/>
+                            <TextBlock x:Name="ChoosenWorkerBlock" Text="Менеджер" HorizontalAlignment="Left" Canvas.Left="229" VerticalAlignment="Center"/>
+                            <ComboBox Name="ChangeWorkerComboBox" Canvas.Left="522" Canvas.Top="84" HorizontalAlignment="Center" VerticalAlignment="Center" Width="104">
+                                <TextBlock Text="Менеджер">
+                                    <TextBlock.InputBindings>
+                                        <MouseBinding MouseAction="LeftClick" Command="{Binding ChooseManagerCommand}"/>
+                                    </TextBlock.InputBindings>
+                                </TextBlock>
+                                <TextBlock Text="Консультант">
+                                    <TextBlock.InputBindings>
+                                        <MouseBinding MouseAction="LeftClick" Command="{Binding ChooseConsultantCommand}"/>
+                                    </TextBlock.InputBindings>
+                                </TextBlock>
+                            </ComboBox>
                             <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Canvas.Top="10" Canvas.Left="10">
                                 <TextBlock Text="ID"/>
                                 <TextBox Name="IDBox" Width="100" Height="30" Text="{Binding ElementName=myListView, Path=SelectedItem.ID}"/>
@@ -90,8 +103,8 @@
                                     </LinearGradientBrush>
                                 </Border.Background>
                                 <Canvas>
-                                    <Button Content="Добавить" Command="{Binding Path=CreateNewClientCommand}" CommandParameter="{Binding Selected}" Height="20" Width="80" Canvas.Left="50" HorizontalAlignment="Left" VerticalAlignment="Top" Canvas.Top="10"/>
-                                    <Button Content="Удалить" Command="{Binding Path=DeleteClientCommand}" CommandParameter="{Binding Selected}" Height="20" Width="80" Canvas.Left="50" HorizontalAlignment="Left" VerticalAlignment="Top" Canvas.Top="40"/>
+                                    <Button x:Name="AddClientButton" Content="Добавить" Command="{Binding Path=CreateNewClientCommand}" CommandParameter="{Binding Selected}" Height="20" Width="80" Canvas.Left="50" HorizontalAlignment="Left" VerticalAlignment="Top" Canvas.Top="10"/>
+                                    <Button x:Name="DeleteClientButton" Content="Удалить" Command="{Binding Path=DeleteClientCommand}" CommandParameter="{Binding Selected}" Height="20" Width="80" Canvas.Left="50" HorizontalAlignment="Left" VerticalAlignment="Top" Canvas.Top="40"/>
                                     <Button Content="Изменить" Command="{Binding Path=ChangeClientCommand}" CommandParameter="{Binding Selected}" Height="20" Width="80" Canvas.Left="50" HorizontalAlignment="Left" VerticalAlignment="Top" Canvas.Top="80"/>
                                 </Canvas>
                             </Border>

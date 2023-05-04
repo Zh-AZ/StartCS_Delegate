@@ -24,6 +24,7 @@ namespace StartCS_Delegate
     {
         public delegate void Notify<in T>(T arg);
         public event Notify<MessageBoxResult> NotifyMessage;
+        
         //static HistoryWindow HistoryWindow;
 
         //public ICommand OpenHistoryWindowCommand { get; set; }
@@ -34,13 +35,13 @@ namespace StartCS_Delegate
         //    ManagerWindow.Close();
         //    HistoryWindow.Show();
         //}
-
+        
         //[field:NonSerialized]
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            if (PropertyChanged != null) 
+            if (PropertyChanged != null)
             {
                 PropertyChangedEventArgs args = new PropertyChangedEventArgs(propertyName);
                 PropertyChanged(this, args);
@@ -48,16 +49,20 @@ namespace StartCS_Delegate
                 if (args.PropertyName != "ItemSource")
                 {
                     WriteToFileHistoryLog(propertyName, ID, Email, Surname, Name, Patronymic, NumberPhone, Address);
-                    MessageWindow messageWindow = new MessageWindow();
-                    messageWindow.MessageBlock.Text = $"Изменено {propertyName} У клиента {ID} {Email} {Surname} {Name} {Patronymic} {NumberPhone} {Address}";
-                    messageWindow.Show();
+                    //MessageWindow messageWindow = new MessageWindow();
+                    //messageWindow.MessageBlock.Text = $"Изменено {propertyName} У клиента {ID} {Email} {Surname} {Name} {Patronymic} {NumberPhone} {Address}";
+                    //messageWindow.Show();
+                    //MessageBox.Show($"Изменено {propertyName} У клиента {ID} {Email} {Surname} {Name} {Patronymic} {NumberPhone} {Address}");
                 }
             }
+
             //PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            //NotifyMessage?.Invoke(MessageBox.Show($"Изменено {propertyName}"));
-            //MessageBox.Show($"Изменено {propertyName}");
+            ////NotifyMessage?.Invoke(MessageBox.Show($"Изменено {propertyName}"));
+            //WriteToFileHistoryLog(propertyName, ID, Email, Surname, Name, Patronymic, NumberPhone, Address);
+            //MessageBox.Show($"Изменено {propertyName} У клиента {ID} {Email} {Surname} {Name} {Patronymic} {NumberPhone} {Address}");
+            ////MessageBox.Show($"Изменено {propertyName}");
         }
-        
+
         //async Task SerializeAsync()
         //{
         //    await Task.Run(() => { XmlSerialize(Clients); });

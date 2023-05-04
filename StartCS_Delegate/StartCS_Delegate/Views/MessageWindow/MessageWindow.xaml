@@ -6,11 +6,11 @@
         xmlns:local="clr-namespace:StartCS_Delegate.Views.MessageWindow"
         mc:Ignorable="d"
         xmlns:vm="clr-namespace:StartCS_Delegate.ViewModels"
-        Title="MessageWindow" Height="450" Width="800">
+        Title="MessageWindow" Height="151" Width="431">
     <Window.DataContext>
         <vm:MainWindowViewModel x:Name="ViewModel"/>
     </Window.DataContext>
     <Grid>
-        <TextBlock Name="MessageBlock" HorizontalAlignment="Center" TextWrapping="Wrap" Text="Сообщений нет" VerticalAlignment="Center" Height="414" Width="780"/>
+        <TextBlock Name="MessageBlock" HorizontalAlignment="Center" TextWrapping="Wrap" Text="Сообщений нет" VerticalAlignment="Center" Height="115" Width="412"/>
     </Grid>
 </Window>

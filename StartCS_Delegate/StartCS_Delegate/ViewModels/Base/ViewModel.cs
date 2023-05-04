@@ -1,6 +1,8 @@
-﻿using System;
+﻿using StartCS_Delegate.Views.MessageWindow;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -15,6 +17,15 @@ namespace StartCS_Delegate.ViewModels.Base
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        string path = @"..\Debug\HistoryLog.txt"; //string path = @"..\Debug\Client.xml";
+        async void WriteToFileHistoryLog(string propertyName, string ID, string Email, string Name, string Surname, string Patronymic, string NumberPhone, string Address)
+        {
+            using (StreamWriter sw = new StreamWriter(path, true))
+            {
+                await sw.WriteLineAsync($"Изменено {propertyName} У клиента {ID} {Email} {Name} {Surname} {Patronymic} {NumberPhone} {Address}");
+            }
         }
 
         /// <summary>

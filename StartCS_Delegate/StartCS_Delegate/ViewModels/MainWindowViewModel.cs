@@ -26,6 +26,7 @@ using System.ComponentModel;
 using System.Security.Cryptography;
 using System.Runtime.CompilerServices;
 using System.Data;
+using Faker;
 
 namespace StartCS_Delegate.ViewModels
 {
@@ -138,20 +139,31 @@ namespace StartCS_Delegate.ViewModels
             XmlSerialize(Clients);
         }
 
+        public new event PropertyChangedEventHandler PropertyChanged;
         private delegate void SerializeXml(ObservableCollection<Client> client);
-        Mutex mutex = new Mutex();
+        //Mutex mutex = new Mutex();
+        object locker = new object();
         /// <summary>
         /// Сохранение изменений клииента
         /// </summary>
         public ICommand ChangeClientCommand { get; }
-        private bool CanChangeClientCommandExecute(object p) => true; //p is Client client && Clients.Contains(client);
+        private bool CanChangeClientCommandExecute(object p) => p is Client client && Clients.Contains(client);
         private void OnChangeClientCommandExecute(object p)
         {
+            XmlSerialize(Clients);
+            MessageWindow = new MessageWindow();
+            MessageWindow.Owner = ManagerWindow;
+            MessageWindow.MessageBlock.Text = "Изменения сохранены смотрите в истории";
+            MessageWindow.Show();
+
+            //Clients.CollectionChanged += ContentCollectionChanged;
+
             //async Task SerializeAsync()
             //{
             //    await Task.Run(() => { XmlSerialize(Clients); });
             //}
             //await SerializeAsync();
+
             //await Task.Run(() => { XmlSerialize(Clients); });
 
             //SerializeXml serializeXml = XmlSerialize;
@@ -159,10 +171,8 @@ namespace StartCS_Delegate.ViewModels
             //Thread serializeThread = new Thread(serializeXml);
             //serializeThread.Start(Clients);
 
-            Thread serializeThread = new Thread(() => XmlSerialize(Clients));
-            serializeThread.Start();
-
-            //XmlSerialize(Clients);
+            //Thread serializeThread = new Thread(() => XmlSerialize(Clients));
+            //serializeThread.Start();
         }
 
         async Task SerializeAsync()
@@ -200,12 +210,31 @@ namespace StartCS_Delegate.ViewModels
         /// </summary>
         public ICommand OpenHistoryWindowCommand { get; }
         private bool CanOpenHistoryWindowCommandExecute(object p) => true;
-        private async void OnOpenHistoryWindowCommandExecute(object p)
+        private void OnOpenHistoryWindowCommandExecute(object p)
         {
             HistoryWindow = new HistoryWindow();
-            HistoryWindow.HistoryBlock.Text = await ReadToFileHistoryLog();
+            //HistoryWindow.HistoryBlock.Text = await ReadToFileHistoryLog();
+          
+            //HistoryWindow.HistoryBlock.Text = Convert.ToString(ReadFile());
+            //HistoryWindow.HistoryKistBox.Items.Add(await ReadToFileHistoryLog());
+            ReadFile();
             ManagerWindow.Close();
             HistoryWindow.Show();
+        }
+
+        public ICommand ClearHistoryCommand { get; }
+        private bool CanClearHistoryCommandExecute(object p) => true;
+        async private void OnClearHistoryCommandExecute( object p)
+        {
+            System.IO.File.WriteAllText(historyLogPath, string.Empty);
+            //HistoryWindow.HistoryBlock.Text = await ReadToFileHistoryLog();
+       
+            //HistoryWindow.HistoryBlock.Text = Convert.ToString(ReadFile());
+
+            //HistoryWindow.HistoryKistBox.Items.Add(await ReadToFileHistoryLog());
+            HistoryWindow.HistoryControl.Items.Add(await ReadToFileHistoryLog());
+            HistoryWindow.HistoryControl.Items.Clear();
+            //ReadFile();
         }
 
         //string historyPath = @"..\Debug\HistoryLog.txt";
@@ -226,7 +255,8 @@ namespace StartCS_Delegate.ViewModels
         private void OnBackToManagerWindowCommandExecute(object p)
         {
             ManagerWindow = new ManagerWindow();
-            TransactionWindow.Close();
+            TransactionWindow?.Close();
+            HistoryWindow?.Close();
             ManagerWindow.Show();
         }
 
@@ -274,7 +304,7 @@ namespace StartCS_Delegate.ViewModels
                     {
                         int sums = int.Parse(client.Bill) + int.Parse(TransactionWindow.NonDepAmountBlock.Text);
                         client.Bill = Convert.ToString(sums);
-                        MessageWindow.MessageBlock.Text = $"счёт {client} пополнен";
+                        MessageWindow.MessageBlock.Text = $"\nсчёт {client} пополнен";
                         WriteToFileHistoryLog(MessageWindow.MessageBlock.Text.ToString());
                         MessageWindow.ShowDialog();
                     }
@@ -309,7 +339,7 @@ namespace StartCS_Delegate.ViewModels
                     {
                         int sums = int.Parse(client.DepBill) + int.Parse(TransactionWindow.DepAmountBlock.Text);
                         client.DepBill = Convert.ToString(sums);
-                        MessageWindow.MessageBlock.Text = $"депозитный счёт {client} пополнен";
+                        MessageWindow.MessageBlock.Text = $"\nдепозитный счёт {client} пополнен";
                         WriteToFileHistoryLog(MessageWindow.MessageBlock.Text.ToString());
                         MessageWindow.ShowDialog();
                     }
@@ -363,7 +393,7 @@ namespace StartCS_Delegate.ViewModels
                         int sums = int.Parse(client.Bill) + minusClientBalance;
                         client.Bill = Convert.ToString(sums);
 
-                        MessageWindow.MessageBlock.Text = $"счёт переведен от {dataNonDepositClient} к {client} количесвто {minusClientBalance}";
+                        MessageWindow.MessageBlock.Text = $"\nсчёт переведен от {dataNonDepositClient} к {client} количесвто {minusClientBalance}";
                         WriteToFileHistoryLog(MessageWindow.MessageBlock.Text.ToString());
                         MessageWindow.ShowDialog();
                     }
@@ -408,7 +438,7 @@ namespace StartCS_Delegate.ViewModels
                     {
                         int sums = int.Parse(client.DepBill) + minusClientBalance;
                         client.DepBill = Convert.ToString(sums);
-                        MessageWindow.MessageBlock.Text = $"депозитный счёт переведен от {dataDepositClient} к {client} количесвто {minusClientBalance}";
+                        MessageWindow.MessageBlock.Text = $"\nдепозитный счёт переведен от {dataDepositClient} к {client} количесвто {minusClientBalance}";
                         WriteToFileHistoryLog(MessageWindow.MessageBlock.Text.ToString());
                         MessageWindow.ShowDialog();
                     }
@@ -433,14 +463,14 @@ namespace StartCS_Delegate.ViewModels
                     if (client.DepBill == "Закрытый")
                     {
                         client.DepBill = "0";
-                        MessageWindow.MessageBlock.Text = $"депозитный счёт {client} открыт";
+                        MessageWindow.MessageBlock.Text = $"\nдепозитный счёт {client} открыт";
                         WriteToFileHistoryLog(MessageWindow.MessageBlock.Text.ToString());
                         MessageWindow.ShowDialog();
                     }
                     else 
                     { 
                         client.DepBill = "Закрытый";
-                        MessageWindow.MessageBlock.Text = $"депозитный счёт {client} закрыт";
+                        MessageWindow.MessageBlock.Text = $"\nдепозитный счёт {client} закрыт";
                         WriteToFileHistoryLog(MessageWindow.MessageBlock.Text.ToString());
                         MessageWindow.ShowDialog();
                     }
@@ -464,14 +494,14 @@ namespace StartCS_Delegate.ViewModels
                     if (client.Bill == "Закрытый")
                     {
                         client.Bill = "0";
-                        MessageWindow.MessageBlock.Text = $"счёт {client} открыт";
+                        MessageWindow.MessageBlock.Text = $"\nсчёт {client} открыт";
                         WriteToFileHistoryLog(MessageWindow.MessageBlock.Text.ToString());
                         MessageWindow.ShowDialog();
                     }
                     else 
                     {
                         client.Bill = "Закрытый";
-                        MessageWindow.MessageBlock.Text = $"счёт {client} закрыт";
+                        MessageWindow.MessageBlock.Text = $"\nсчёт {client} закрыт";
                         WriteToFileHistoryLog(MessageWindow.MessageBlock.Text.ToString());
                         MessageWindow.ShowDialog();
                     }
@@ -480,10 +510,42 @@ namespace StartCS_Delegate.ViewModels
             XmlSerialize(Clients);
         }
 
+        public ICommand ChooseConsultantCommand { get; }
+        private bool CanChooseConsultantCommandExecute(object p) => true;
+        private void OnChooseConsultantCommandExecute(object p)
+        {
+            ManagerWindow.ChoosenWorkerBlock.Text = "Консультант";
+            ManagerWindow.IDBox.IsReadOnly = true;
+            ManagerWindow.EmailBox.IsReadOnly = true;
+            ManagerWindow.SurnameBox.IsReadOnly = true;
+            ManagerWindow.NameBox.IsReadOnly = true;
+            ManagerWindow.PatronymicBox.IsReadOnly = true;
+            ManagerWindow.AddressBox.IsReadOnly = true;
+            ManagerWindow.OpenTransferWindowButton.IsEnabled = false;
+            ManagerWindow.AddClientButton.IsEnabled = false;
+            ManagerWindow.DeleteClientButton.IsEnabled = false; 
+        }
+
+        public ICommand ChooseManagerCommand { get; }
+        private bool CanChooseManagerCommandExecute(object p) => true;
+        private void OnChooseManagerCommandExecute(object p)
+        {
+            ManagerWindow.ChoosenWorkerBlock.Text = "Менеджер";
+            ManagerWindow.IDBox.IsReadOnly = false;
+            ManagerWindow.EmailBox.IsReadOnly = false;
+            ManagerWindow.SurnameBox.IsReadOnly = false;
+            ManagerWindow.NameBox.IsReadOnly = false;
+            ManagerWindow.PatronymicBox.IsReadOnly = false;
+            ManagerWindow.AddressBox.IsReadOnly = false;
+            ManagerWindow.OpenTransferWindowButton.IsEnabled = true;
+            ManagerWindow.AddClientButton.IsEnabled = true;
+            ManagerWindow.DeleteClientButton.IsEnabled = true;
+        }
+
         #endregion
 
         string historyLogPath = @"..\Debug\HistoryLog.txt";
-
+        
         async void WriteToFileHistoryLog(string propertyName)
         {
             using (StreamWriter sw = new StreamWriter(historyLogPath, true))
@@ -491,8 +553,9 @@ namespace StartCS_Delegate.ViewModels
                 await sw.WriteLineAsync($"{ propertyName} ВРЕМЯ {DateTime.Now}");
             }
         }
-
+        
         string historyPath = @"..\Debug\HistoryLog.txt";
+        string secondHistoryPath = @"..\Debug\SecondHistoryLog.txt";
         async Task<string> ReadToFileHistoryLog()
         {
             using (StreamReader sr = new StreamReader(historyPath))
@@ -502,12 +565,35 @@ namespace StartCS_Delegate.ViewModels
             }
         }
 
+        void ReadFile()
+        {
+            var lines = File.ReadAllLines(historyPath).Reverse();
+            
+            //string reverseStrings = File.ReadAllLines(secondHistoryPath)[0];
+            //string[] list = new[] { };
+            foreach (string line in lines)
+            {
+                HistoryWindow.HistoryControl.Items.Add(line);
+                //HistoryWindow.HistoryKistBox.Items.Add(line);
+
+                //list.Add(line);
+                //return list;
+                //return line;
+                //if (reverseStrings.Equals(lines))
+                //{
+                //    return line;
+                //}
+            }
+            //return "NON";
+        }
+        
         string path = @"..\Debug\Client.xml"; //..\Publications\TravelBrochure.pdf
 
         public MainWindowViewModel()
         {
             OpenManagerWindowCommand = new LambdaCommand(OnOpenManagerWindowCommandExecute, CanOpenManagerWindowCommandExecute);
             OpenHistoryWindowCommand = new LambdaCommand(OnOpenHistoryWindowCommandExecute, CanOpenHistoryWindowCommandExecute);
+            ClearHistoryCommand = new LambdaCommand(OnClearHistoryCommandExecute, CanClearHistoryCommandExecute);
             CreateNewClientCommand = new LambdaCommand(OnCreateNewClientCommandExecute, CanCreateNewClientCommandExecute);
             DeleteClientCommand = new LambdaCommand(OnDeleteClientCommandExecute, CanDeleteClientCommandExecute);
             ChangeClientCommand = new LambdaCommand(OnChangeClientCommandExecute, CanChangeClientCommandExecute);
@@ -521,11 +607,14 @@ namespace StartCS_Delegate.ViewModels
             DepTransferCommand = new LambdaCommand(OnDepTransferCommandExecute, CanDepTransferCommandExecute);
             OpenOrCloseDepositCommand = new LambdaCommand(OnOpenDepositCommandExecute, CanOpenDepositCommandExecute);
             OpenOrCloseNonDepositCommand = new LambdaCommand(OnOpenNonDepositCommandExecute, CanOpenNonDepositCommandExecute);
+            ChooseConsultantCommand = new LambdaCommand(OnChooseConsultantCommandExecute, CanChooseConsultantCommandExecute);
+            ChooseManagerCommand = new LambdaCommand(OnChooseManagerCommandExecute, CanChooseManagerCommandExecute);
 
             //Clients = new TrulyObservableCollection<Client>();
             //Clients = new FullyObservableCollection<Client>();
             Clients = new ObservableCollection<Client>();
-            //Clients.CollectionChanged += ContentCollectionChanged;
+            Clients.CollectionChanged += ContentCollectionChanged;
+            //Clients.CollectionChanged += MyCollection_CollectionChanged;
             if (File.Exists(path)){ XmlDeserialize(Clients); }
             else { GenerationClient(); }
         }
@@ -557,28 +646,43 @@ namespace StartCS_Delegate.ViewModels
 
         private void ExecuteOnAnyChangeOfCollection()
         {
-            MessageBox.Show("Collection has changed");
+            //MessageBox.Show("Collection has changed");
+            //ManagerWindow.Close();
+            //ManagerWindow = new ManagerWindow();
+            //ManagerWindow.Show();
+            
+            XmlSerialize(Clients);
+            WriteToFileHistoryLog($"\nИзменения внесены {ManagerWindow.ChoosenWorkerBlock.Text}ом");
+            
+            //ManagerWindow.myListView.Items.Refresh();
+            //Clients.Clear();
+            //XmlDeserialize(Clients);
+            //ManagerWindow newManagerWindow = new ManagerWindow();
+            //ManagerWindow = newManagerWindow;
+            //newManagerWindow.Show();
+            //ManagerWindow.Close();
+            
         }
 
-        //void MyCollection_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        //{
-        //    if (e.NewItems != null)
-        //    {
-        //        foreach (Client item in e.NewItems) 
-        //        {
-        //            item.PropertyChanged += MyClass_PropertyChanged;
-        //        }
-        //    }
+        void MyCollection_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (Client item in e.NewItems)
+                {
+                    item.PropertyChanged += MyClass_PropertyChanged;
+                }
+            }
 
-        //    if (e.OldItems != null)
-        //    {
-        //        foreach (Client item in e.OldItems)
-        //        {
-        //            item.PropertyChanged -= MyClass_PropertyChanged;
-        //        }
-        //    }
-        //    ExecuteOnAnyChangeOfCollection();
-        //}
+            if (e.OldItems != null)
+            {
+                foreach (Client item in e.OldItems)
+                {
+                    item.PropertyChanged -= MyClass_PropertyChanged;
+                }
+            }
+            ExecuteOnAnyChangeOfCollection();
+        }
 
         void GenerationClient()
         {
@@ -614,14 +718,12 @@ namespace StartCS_Delegate.ViewModels
 
         public void XmlSerialize(ObservableCollection<Client> clients)
         {
-            mutex.WaitOne();
             File.WriteAllText(path, String.Empty);
             XmlSerializer xmlSerializer = new XmlSerializer(typeof(ObservableCollection<Client>));
             using (FileStream fs = new FileStream(path, FileMode.OpenOrCreate))
             {
                 xmlSerializer.Serialize(fs, clients);
             }
-            mutex.ReleaseMutex();
         }
 
         void XmlDeserialize(ObservableCollection<Client> clients)
