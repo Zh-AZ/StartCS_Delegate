@@ -17,7 +17,7 @@
                     <MenuItem Header="Выход"/>
                 </MenuItem>
             </Menu>
-
+            
             <Grid Name="mainGrid">
                 <Grid.InputBindings>
                     <MouseBinding Command="{Binding Path=ClearFocusCommand}" MouseAction="LeftClick"/>

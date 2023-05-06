@@ -19,6 +19,9 @@
             </Menu>
 
             <Grid ShowGridLines="True">
+                <Grid.InputBindings>
+                    <MouseBinding Command="{Binding Path=ClearFocusCommand}" MouseAction="LeftClick"/>
+                </Grid.InputBindings>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="100*"/>
                     <RowDefinition Height="177*"/>
@@ -101,9 +104,26 @@
                             <TextBox x:Name="ToAccountTransaction" Width="100"/>
                         </TextBlock>
 
-                        <Button Content="Search From" Canvas.Left="214" Canvas.Top="45"/>
-                        <Button Content="Search To" Canvas.Left="214" Canvas.Top="89"/>
+                        <StackPanel Canvas.Left="197" Canvas.Top="32">
+                            <TextBlock Text="NonDeposit"/>
+                            <TextBox x:Name="FromIDNonDepositBox" IsReadOnly="True"/>
+                        </StackPanel>
+                        <StackPanel Canvas.Left="300" Canvas.Top="32" HorizontalAlignment="Left" VerticalAlignment="Center">
+                            <TextBlock Text="Deposit"/>
+                            <TextBox x:Name="FromIDDepositBox" IsReadOnly="True"/>
+                        </StackPanel>
 
+                        <StackPanel Canvas.Left="197" Canvas.Top="77" HorizontalAlignment="Center" VerticalAlignment="Top">
+                            <TextBlock Text="NonDeposit"/>
+                            <TextBox x:Name="ToIDNonDepositBox" IsReadOnly="True"/>
+                        </StackPanel>
+                        <StackPanel Canvas.Left="300" Canvas.Top="77" HorizontalAlignment="Center" VerticalAlignment="Top">
+                            <TextBlock Text="Deposit"/>
+                            <TextBox x:Name="ToIDDepositBox" IsReadOnly="True"/>
+                        </StackPanel>
+                        <!--<Button Content="Search From" Canvas.Left="214" Canvas.Top="45"/>
+                        <Button Content="Search To" Canvas.Left="214" Canvas.Top="89"/>-->
+                        <Button Content="Search" Name="SeacrchButton" Command="{Binding Path=SearchIDFromToCommand}" Canvas.Left="380" Canvas.Top="67" HorizontalAlignment="Center" VerticalAlignment="Top" Width="60" Height="25"/>
                         <TextBlock Canvas.Left="489" Canvas.Top="45">
                             <Run Text="AmountUnDeposit: "/>
                             <TextBox x:Name="TransactionAmountBlock" Width="100"/>

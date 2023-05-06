@@ -27,6 +27,7 @@ using System.Security.Cryptography;
 using System.Runtime.CompilerServices;
 using System.Data;
 using Faker;
+using System.Net;
 
 namespace StartCS_Delegate.ViewModels
 {
@@ -72,6 +73,33 @@ namespace StartCS_Delegate.ViewModels
             }
         }
 
+        public ICommand OpenConsultantWindowCommand { get; }
+        private bool CanOpenConsultantWindowCommandExecute(object p) => true;
+        private void OnOpenConsultantWindowCommandExecute(object p)
+        {
+            MainWindow.progressBar.ValueChanged += ProgressBar_ValueChangedForConsultant;
+        }
+
+        private void ProgressBar_ValueChangedForConsultant(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (MainWindow.progressBar.Value == 100) 
+            {
+                ManagerWindow = new ManagerWindow();
+                ManagerWindow.ChoosenWorkerBlock.Text = "Консультант";
+                ManagerWindow.IDBox.IsReadOnly = true;
+                ManagerWindow.EmailBox.IsReadOnly = true;
+                ManagerWindow.SurnameBox.IsReadOnly = true;
+                ManagerWindow.NameBox.IsReadOnly = true;
+                ManagerWindow.PatronymicBox.IsReadOnly = true;
+                ManagerWindow.AddressBox.IsReadOnly = true;
+                ManagerWindow.OpenTransferWindowButton.IsEnabled = false;
+                ManagerWindow.AddClientButton.IsEnabled = false;
+                ManagerWindow.DeleteClientButton.IsEnabled = false;
+                ManagerWindow.Show();
+                MainWindow.Close();
+            }
+        }
+
         /// <summary>
         /// Добавление новых клиентов
         /// </summary>
@@ -91,6 +119,7 @@ namespace StartCS_Delegate.ViewModels
             {
                 if (newClient.Bill == String.Empty && newClient.DepBill == String.Empty)
                 {
+                    MessageWindow = new MessageWindow();
                     newClient.Bill = "Закрытый";
                     newClient.DepBill = "Закрытый";
                     Clients.Add(newClient);
@@ -134,6 +163,7 @@ namespace StartCS_Delegate.ViewModels
         private bool CanDeleteClientCommandExecute(object p) => p is Client client && Clients.Contains(client);
         private void OnDeleteClientCommandExecute(object p)
         {
+            MessageWindow = new MessageWindow();
             if (!(p is Client client)) return;
             Clients.Remove(client);
             XmlSerialize(Clients);
@@ -187,9 +217,31 @@ namespace StartCS_Delegate.ViewModels
         private bool CanClearFocusCommadExecute(object p) => true;
         private void OnClearFocusCommandExecute(object p)
         {
-            if (ManagerWindow.myListView.SelectedItems.Count != 0)
+            if (ManagerWindow != null) 
             {
-                ManagerWindow.myListView.SelectedItems[0] = false;
+                if (ManagerWindow.myListView.SelectedItems.Count != 0)
+                {
+                    ManagerWindow.myListView.SelectedItems[0] = false;
+                }
+            }
+            
+            if (TransactionWindow != null) 
+            {
+                TransactionWindow.SearchBox.Text = "";
+                TransactionWindow.FoundBalanceBlock.Text = "";
+                TransactionWindow.DepFoundBalanceBlock.Text = "";
+                TransactionWindow.NonDepAccountIDBlock.Text = "";
+                TransactionWindow.NonDepAmountBlock.Text = "";
+                TransactionWindow.DepAccountIDBlock.Text = "";
+                TransactionWindow.DepAmountBlock.Text = "";
+                TransactionWindow.FromAccountTransaction.Text = "";
+                TransactionWindow.ToAccountTransaction.Text = "";
+                TransactionWindow.FromIDNonDepositBox.Text = "";
+                TransactionWindow.FromIDDepositBox.Text = "";
+                TransactionWindow.ToIDNonDepositBox.Text = "";
+                TransactionWindow.ToIDDepositBox.Text = "";
+                TransactionWindow.TransactionAmountBlock.Text = "";
+                TransactionWindow.DepTransactionAmountBlock.Text = "";
             }
         }
 
@@ -255,6 +307,16 @@ namespace StartCS_Delegate.ViewModels
         private void OnBackToManagerWindowCommandExecute(object p)
         {
             ManagerWindow = new ManagerWindow();
+            ManagerWindow.ChoosenWorkerBlock.Text = "Консультант";
+            ManagerWindow.IDBox.IsReadOnly = true;
+            ManagerWindow.EmailBox.IsReadOnly = true;
+            ManagerWindow.SurnameBox.IsReadOnly = true;
+            ManagerWindow.NameBox.IsReadOnly = true;
+            ManagerWindow.PatronymicBox.IsReadOnly = true;
+            ManagerWindow.AddressBox.IsReadOnly = true;
+            ManagerWindow.OpenTransferWindowButton.IsEnabled = false;
+            ManagerWindow.AddClientButton.IsEnabled = false;
+            ManagerWindow.DeleteClientButton.IsEnabled = false;
             TransactionWindow?.Close();
             HistoryWindow?.Close();
             ManagerWindow.Show();
@@ -267,8 +329,34 @@ namespace StartCS_Delegate.ViewModels
         private bool CanSearchCommandExecute(object p) => true;
         private void OnSearchCommandExecute(object p)
         {
+            SearchCommandMethod();
+
+            //foreach (Client client in Clients)
+            //{
+            //    if (TransactionWindow.SearchBox.Text == client.ID)
+            //    {
+            //        TransactionWindow.FoundBalanceBlock.Text = client.Bill;
+            //        TransactionWindow.DepFoundBalanceBlock.Text = client.DepBill;
+            //        if (client.DepBill == "Закрытый")
+            //        {
+            //            TransactionWindow.OpenDepositButton.Content = "Открыть";
+            //        }
+            //        else { TransactionWindow.OpenDepositButton.Content = "Закрыть"; }
+            //        if (client.Bill == "Закрытый")
+            //        {
+            //            TransactionWindow.OpenNonDepositButton.Content = "Открыть";
+            //        }
+            //        else { TransactionWindow.OpenNonDepositButton.Content = "Закрыть"; }
+            //    }
+            //    //else { MessageBox.Show("Not Found!"); }
+            //}
+        }
+
+        void SearchCommandMethod()
+        {
             foreach (Client client in Clients)
             {
+                //bool showed = false;
                 if (TransactionWindow.SearchBox.Text == client.ID)
                 {
                     TransactionWindow.FoundBalanceBlock.Text = client.Bill;
@@ -277,14 +365,39 @@ namespace StartCS_Delegate.ViewModels
                     {
                         TransactionWindow.OpenDepositButton.Content = "Открыть";
                     }
-                    else { TransactionWindow.OpenDepositButton.Content = "Закрыть"; }
+                    else 
+                    { TransactionWindow.OpenDepositButton.Content = "Закрыть"; }
                     if (client.Bill == "Закрытый")
                     {
                         TransactionWindow.OpenNonDepositButton.Content = "Открыть";
                     }
                     else { TransactionWindow.OpenNonDepositButton.Content = "Закрыть"; }
                 }
-                //else { MessageBox.Show("Not Found!"); }
+                //if (!showed) 
+                //{
+                //    MessageBox.Show("Not found");
+                //    showed = true;
+                //}
+            }
+
+            foreach (Client client in Clients)
+            {
+                if (TransactionWindow.FromAccountTransaction.Text == client.ID && TransactionWindow.FromAccountTransaction.Text != String.Empty
+                    && TransactionWindow.ToAccountTransaction.Text != string.Empty)
+                {
+                    TransactionWindow.FromIDNonDepositBox.Text = client.Bill;
+                    TransactionWindow.FromIDDepositBox.Text = client.DepBill;
+                }
+            }
+
+            foreach (Client client in Clients)
+            {
+                if (TransactionWindow.ToAccountTransaction.Text == client.ID && TransactionWindow.ToAccountTransaction.Text != String.Empty
+                   && TransactionWindow.FromAccountTransaction.Text != String.Empty)
+                {
+                    TransactionWindow.ToIDDepositBox.Text = client.DepBill;
+                    TransactionWindow.ToIDNonDepositBox.Text = client.Bill;
+                }
             }
         }
 
@@ -310,6 +423,7 @@ namespace StartCS_Delegate.ViewModels
                     }
                 }
             }
+            SearchCommandMethod();
             XmlSerialize(Clients);
         }
 
@@ -345,7 +459,33 @@ namespace StartCS_Delegate.ViewModels
                     }
                 }
             }
+            SearchCommandMethod();
             XmlSerialize(Clients);
+        }
+
+        public ICommand SearchIDFromToCommand { get; }
+        private bool CanSearchIDFromToCommandExecute(object p) => true;
+        private void OnSearchIDFromToCommandExecute(object p)
+        {
+            foreach (Client client in Clients) 
+            {
+                if (TransactionWindow.FromAccountTransaction.Text == client.ID && TransactionWindow.FromAccountTransaction.Text != String.Empty
+                    && TransactionWindow.ToAccountTransaction.Text != string.Empty)
+                {
+                    TransactionWindow.FromIDNonDepositBox.Text = client.Bill;
+                    TransactionWindow.FromIDDepositBox.Text = client.DepBill;
+                }
+            }
+
+            foreach (Client client in Clients) 
+            {
+                if (TransactionWindow.ToAccountTransaction.Text == client.ID && TransactionWindow.ToAccountTransaction.Text != String.Empty
+                   && TransactionWindow.FromAccountTransaction.Text != String.Empty)
+                {
+                    TransactionWindow.ToIDDepositBox.Text = client.DepBill;
+                    TransactionWindow.ToIDNonDepositBox.Text= client.Bill;
+                }
+            }
         }
 
         private static int minusClientBalance;
@@ -399,6 +539,7 @@ namespace StartCS_Delegate.ViewModels
                     }
                 }
             }
+            SearchCommandMethod();
             XmlSerialize(Clients);
         }
 
@@ -445,6 +586,7 @@ namespace StartCS_Delegate.ViewModels
                     else { MessageBox.Show("Счёт клиента закрытый"); }
                 }
             }
+            SearchCommandMethod();
             XmlSerialize(Clients);
         }
 
@@ -476,6 +618,7 @@ namespace StartCS_Delegate.ViewModels
                     }
                 }
             }
+            SearchCommandMethod();
             XmlSerialize(Clients);
         }
          
@@ -507,6 +650,7 @@ namespace StartCS_Delegate.ViewModels
                     }
                 }
             }
+            SearchCommandMethod();
             XmlSerialize(Clients);
         }
 
@@ -592,6 +736,7 @@ namespace StartCS_Delegate.ViewModels
         public MainWindowViewModel()
         {
             OpenManagerWindowCommand = new LambdaCommand(OnOpenManagerWindowCommandExecute, CanOpenManagerWindowCommandExecute);
+            OpenConsultantWindowCommand = new LambdaCommand(OnOpenConsultantWindowCommandExecute, CanOpenConsultantWindowCommandExecute);
             OpenHistoryWindowCommand = new LambdaCommand(OnOpenHistoryWindowCommandExecute, CanOpenHistoryWindowCommandExecute);
             ClearHistoryCommand = new LambdaCommand(OnClearHistoryCommandExecute, CanClearHistoryCommandExecute);
             CreateNewClientCommand = new LambdaCommand(OnCreateNewClientCommandExecute, CanCreateNewClientCommandExecute);
@@ -609,6 +754,7 @@ namespace StartCS_Delegate.ViewModels
             OpenOrCloseNonDepositCommand = new LambdaCommand(OnOpenNonDepositCommandExecute, CanOpenNonDepositCommandExecute);
             ChooseConsultantCommand = new LambdaCommand(OnChooseConsultantCommandExecute, CanChooseConsultantCommandExecute);
             ChooseManagerCommand = new LambdaCommand(OnChooseManagerCommandExecute, CanChooseManagerCommandExecute);
+            SearchIDFromToCommand = new LambdaCommand(OnSearchIDFromToCommandExecute, CanSearchIDFromToCommandExecute);
 
             //Clients = new TrulyObservableCollection<Client>();
             //Clients = new FullyObservableCollection<Client>();
