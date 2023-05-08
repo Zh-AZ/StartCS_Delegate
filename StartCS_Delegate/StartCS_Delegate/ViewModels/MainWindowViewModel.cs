@@ -28,6 +28,7 @@ using System.Runtime.CompilerServices;
 using System.Data;
 using Faker;
 using System.Net;
+using System.Windows.Media;
 
 namespace StartCS_Delegate.ViewModels
 {
@@ -68,6 +69,8 @@ namespace StartCS_Delegate.ViewModels
             if (MainWindow.progressBar.Value == 100)
             {
                 ManagerWindow = new ManagerWindow();
+                ManagerWindow.ChangeWorkerComboBox.SelectedIndex = 0;
+                ManagerWindow.MainGrid.Background = new SolidColorBrush(Colors.MediumTurquoise);
                 ManagerWindow.Show();
                 MainWindow.Close();
             }
@@ -85,7 +88,9 @@ namespace StartCS_Delegate.ViewModels
             if (MainWindow.progressBar.Value == 100) 
             {
                 ManagerWindow = new ManagerWindow();
-                ManagerWindow.ChoosenWorkerBlock.Text = "Консультант";
+                //ManagerWindow.ChoosenWorkerBlock.Text = "Консультант";
+                ManagerWindow.ChangeWorkerComboBox.SelectedIndex = 1;
+                ManagerWindow.MainGrid.Background = new SolidColorBrush(Colors.LightSeaGreen);
                 ManagerWindow.IDBox.IsReadOnly = true;
                 ManagerWindow.EmailBox.IsReadOnly = true;
                 ManagerWindow.SurnameBox.IsReadOnly = true;
@@ -169,10 +174,11 @@ namespace StartCS_Delegate.ViewModels
             XmlSerialize(Clients);
         }
 
-        public new event PropertyChangedEventHandler PropertyChanged;
-        private delegate void SerializeXml(ObservableCollection<Client> client);
+        //public new event PropertyChangedEventHandler PropertyChanged;
+        //private delegate void SerializeXml(ObservableCollection<Client> client);
         //Mutex mutex = new Mutex();
-        object locker = new object();
+        //object locker = new object();
+
         /// <summary>
         /// Сохранение изменений клииента
         /// </summary>
@@ -307,7 +313,9 @@ namespace StartCS_Delegate.ViewModels
         private void OnBackToManagerWindowCommandExecute(object p)
         {
             ManagerWindow = new ManagerWindow();
-            ManagerWindow.ChoosenWorkerBlock.Text = "Консультант";
+            //ManagerWindow.ChoosenWorkerBlock.Text = "Консультант";
+            ManagerWindow.ChangeWorkerComboBox.SelectedIndex = 1;
+            ManagerWindow.MainGrid.Background = new SolidColorBrush(Colors.LightSeaGreen);
             ManagerWindow.IDBox.IsReadOnly = true;
             ManagerWindow.EmailBox.IsReadOnly = true;
             ManagerWindow.SurnameBox.IsReadOnly = true;
@@ -658,7 +666,9 @@ namespace StartCS_Delegate.ViewModels
         private bool CanChooseConsultantCommandExecute(object p) => true;
         private void OnChooseConsultantCommandExecute(object p)
         {
-            ManagerWindow.ChoosenWorkerBlock.Text = "Консультант";
+            //ManagerWindow.ChoosenWorkerBlock.Text = "Консультант";
+            ManagerWindow.ChangeWorkerComboBox.SelectedIndex = 1;
+            ManagerWindow.MainGrid.Background = new SolidColorBrush(Colors.LightSeaGreen);
             ManagerWindow.IDBox.IsReadOnly = true;
             ManagerWindow.EmailBox.IsReadOnly = true;
             ManagerWindow.SurnameBox.IsReadOnly = true;
@@ -674,7 +684,9 @@ namespace StartCS_Delegate.ViewModels
         private bool CanChooseManagerCommandExecute(object p) => true;
         private void OnChooseManagerCommandExecute(object p)
         {
-            ManagerWindow.ChoosenWorkerBlock.Text = "Менеджер";
+            //ManagerWindow.ChoosenWorkerBlock.Text = "Менеджер";
+            ManagerWindow.ChangeWorkerComboBox.SelectedIndex = 0;
+            ManagerWindow.MainGrid.Background = new SolidColorBrush(Colors.MediumTurquoise);
             ManagerWindow.IDBox.IsReadOnly = false;
             ManagerWindow.EmailBox.IsReadOnly = false;
             ManagerWindow.SurnameBox.IsReadOnly = false;
@@ -798,8 +810,9 @@ namespace StartCS_Delegate.ViewModels
             //ManagerWindow.Show();
             
             XmlSerialize(Clients);
-            WriteToFileHistoryLog($"\nИзменения внесены {ManagerWindow.ChoosenWorkerBlock.Text}ом");
-            
+            //WriteToFileHistoryLog($"\nИзменения внесены {ManagerWindow.ChoosenWorkerBlock.Text}ом");
+            WriteToFileHistoryLog($"\nИзменения внесены {ManagerWindow.ChangeWorkerComboBox.SelectedIndex}ом");
+
             //ManagerWindow.myListView.Items.Refresh();
             //Clients.Clear();
             //XmlDeserialize(Clients);
@@ -807,7 +820,7 @@ namespace StartCS_Delegate.ViewModels
             //ManagerWindow = newManagerWindow;
             //newManagerWindow.Show();
             //ManagerWindow.Close();
-            
+
         }
 
         void MyCollection_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

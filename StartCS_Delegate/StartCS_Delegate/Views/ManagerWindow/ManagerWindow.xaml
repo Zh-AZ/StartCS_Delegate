@@ -6,18 +6,29 @@
         xmlns:local="clr-namespace:StartCS_Delegate.Views.ManagerWindow"
         xmlns:vm="clr-namespace:StartCS_Delegate.ViewModels"
         mc:Ignorable="d"
-        Title="ManagerWindow" Height="450" Width="800">
+        Title="ManagerWindow" Height="585" Width="1165">
     <Window.DataContext>
         <vm:MainWindowViewModel x:Name="ViewModel"/>
     </Window.DataContext>
-    <Grid>
+
+    <Grid x:Name="MainGrid" Background="#20B2AA" Margin="0,0,0,-6">
+
         <DockPanel>
-            <Menu DockPanel.Dock="Top">
-                <MenuItem Header="Выход">
+            <DockPanel.InputBindings>
+                <MouseBinding Command="{Binding Path=ClearFocusCommand}" MouseAction="LeftClick"/>
+            </DockPanel.InputBindings>
+            <Menu DockPanel.Dock="Top" Height="27">
+                <MenuItem Header="Выход" Height="27">
                     <MenuItem Header="Выход"/>
                 </MenuItem>
+                <MenuItem Name="OpenTransferWindowButton" Header="Транзакции" Height="27">
+                    <MenuItem Header="Транзакции" Command="{Binding Path=OpenTransactionWindowCommand}"/>
+                </MenuItem>
+                <MenuItem Header="Журнал истроии" Height="27">
+                    <MenuItem Header="Журнал истории" Command="{Binding Path=OpenHistoryWindowCommand}"/>
+                </MenuItem>
             </Menu>
-            
+
             <Grid Name="mainGrid">
                 <Grid.InputBindings>
                     <MouseBinding Command="{Binding Path=ClearFocusCommand}" MouseAction="LeftClick"/>
@@ -26,8 +37,37 @@
                     <RowDefinition Height="35*"/>
                     <RowDefinition Height="69*"/>
                 </Grid.RowDefinitions>
-                <GroupBox Grid.Row="0" Header="Данные клиента">
-                    <Border BorderBrush="DodgerBlue" CornerRadius="8,8,3,3">
+
+                <!--<StackPanel RenderTransformOrigin="0.5,0.5" Margin="-268,88,268,188" Grid.RowSpan="2">
+                    <StackPanel.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform/>
+                            <SkewTransform/>
+                            <RotateTransform Angle="25.921"/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </StackPanel.RenderTransform>
+                    <Border Width="700" Height="35" Background="#483D8B" Margin="15,0,0,0" CornerRadius="20"/>
+                    <Border Width="700" Height="35" Background="#DAA520" Margin="0,15,0,0" CornerRadius="20"/>
+                    <Border Width="700" Height="35" Background="#F08080	" Margin="75,15,0,0" CornerRadius="20"/>
+                </StackPanel>
+
+                <StackPanel RenderTransformOrigin="0.5,0.5" Margin="342,55,-342,221" Grid.RowSpan="2">
+                    <StackPanel.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform/>
+                            <SkewTransform/>
+                            <RotateTransform Angle="155.844"/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </StackPanel.RenderTransform>
+                    <Border Width="700" Height="35" Background="#483D8B" Margin="15,0,0,0" CornerRadius="20"/>
+                    <Border Width="700" Height="35" Background="#DAA520" Margin="0,15,0,0" CornerRadius="20"/>
+                    <Border Width="700" Height="35" Background="#F08080" Margin="75,15,0,0" CornerRadius="20"/>
+                </StackPanel>-->
+
+                <GroupBox Grid.Row="0" Header="Данные клиента" Foreground="#E6E6FA" FontWeight="Medium" Margin="0,0,0,10">
+                    <Border BorderBrush="DodgerBlue" CornerRadius="8,8,3,3" Margin="0,-17,0,-4">
                         <Border.Background>
                             <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
                                 <GradientStop Color="LightCyan" Offset="0.0" />
@@ -36,57 +76,58 @@
                             </LinearGradientBrush>
                         </Border.Background>
                         <Canvas>
-                            <Button x:Name="OpenTransferWindowButton" Content="TransferWindow" Command="{Binding Path=OpenTransactionWindowCommand}" Canvas.Left="503" Canvas.Top="1"/>
-                            <Button Content="HistoryWindow" Command="{Binding Path=OpenHistoryWindowCommand}" Canvas.Left="503" Canvas.Top="56"/>
-                            <TextBlock x:Name="ChoosenWorkerBlock" Text="Менеджер" HorizontalAlignment="Left" Canvas.Left="229" VerticalAlignment="Center"/>
-                            <ComboBox Name="ChangeWorkerComboBox" Canvas.Left="522" Canvas.Top="84" HorizontalAlignment="Center" VerticalAlignment="Center" Width="104">
-                                <TextBlock Text="Менеджер">
-                                    <TextBlock.InputBindings>
-                                        <MouseBinding MouseAction="LeftClick" Command="{Binding ChooseManagerCommand}"/>
-                                    </TextBlock.InputBindings>
-                                </TextBlock>
-                                <TextBlock Text="Консультант">
-                                    <TextBlock.InputBindings>
-                                        <MouseBinding MouseAction="LeftClick" Command="{Binding ChooseConsultantCommand}"/>
-                                    </TextBlock.InputBindings>
-                                </TextBlock>
-                            </ComboBox>
-                            <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Canvas.Top="10" Canvas.Left="10">
-                                <TextBlock Text="ID"/>
-                                <TextBox Name="IDBox" Width="100" Height="30" Text="{Binding ElementName=myListView, Path=SelectedItem.ID}"/>
+                            <Canvas.Resources>
+                                <Style x:Key="BoxStyle" TargetType="TextBox">
+                                    <Setter Property="Width" Value="100"/>
+                                    <Setter Property="Height" Value="34"/>
+                                    <Setter Property="TextWrapping" Value="Wrap"/>
+                                    <Setter Property="Background" Value="#F0FFF0"/>
+                                    <Setter Property="Foreground" Value="Black"/>
+                                </Style>
+                                <Style x:Key="BlockStyle" TargetType="TextBlock">
+                                    <Setter Property="Foreground" Value="#006400"/>
+                                    <Setter Property="FontWeight" Value="Medium"/>
+                                </Style>
+                            </Canvas.Resources>
+                            <!--<Button x:Name="OpenTransferWindowButton" Content="TransferWindow" Command="{Binding Path=OpenTransactionWindowCommand}" Canvas.Left="503" Canvas.Top="1"/>
+                            <Button Content="HistoryWindow" Command="{Binding Path=OpenHistoryWindowCommand}" Canvas.Left="503" Canvas.Top="56"/>-->
+                            <!--<TextBlock x:Name="ChoosenWorkerBlock" TextAlignment="Center" FontSize="20" FontWeight="Medium" Text="Менеджер" HorizontalAlignment="Left" Canvas.Left="332" VerticalAlignment="Top" Canvas.Top="129" Height="26" Width="103"/>-->
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top" Canvas.Left="10" Canvas.Top="16">
+                                <TextBlock Text="ID"  Style="{StaticResource BlockStyle}"/>
+                                <TextBox Name="IDBox" Style="{StaticResource BoxStyle}" Text="{Binding ElementName=myListView, Path=SelectedItem.ID}"/>
                             </StackPanel>
-                            <StackPanel Canvas.Left="141" Canvas.Top="10" HorizontalAlignment="Left" 
-                                         VerticalAlignment="Top" RenderTransformOrigin="0.512,0.524">
-                                <TextBlock Text="Почта"/>
-                                <TextBox Name="EmailBox" TextWrapping="Wrap" Width="100" Height="34" Text="{Binding ElementName=myListView, Path=SelectedItem.Email}"/>
+                            <StackPanel Canvas.Left="141" HorizontalAlignment="Center" 
+                                         VerticalAlignment="Top" RenderTransformOrigin="0.512,0.524" Canvas.Top="16">
+                                <TextBlock Text="Почта"  Style="{StaticResource BlockStyle}"/>
+                                <TextBox Name="EmailBox" Style="{StaticResource BoxStyle}" Text="{Binding ElementName=myListView, Path=SelectedItem.Email}"/>
                             </StackPanel>
-                            <StackPanel Canvas.Left="10" Canvas.Top="60" HorizontalAlignment="Left" VerticalAlignment="Top">
-                                <TextBlock Text="Фамилия"/>
-                                <TextBox Name="SurnameBox" TextWrapping="Wrap" Width="100" Height="25" Text="{Binding ElementName=myListView, Path=SelectedItem.Surname}"/>
+                            <StackPanel Canvas.Left="10" Canvas.Top="78" HorizontalAlignment="Center" VerticalAlignment="Top">
+                                <TextBlock Text="Фамилия"  Style="{StaticResource BlockStyle}"/>
+                                <TextBox Name="SurnameBox" Style="{StaticResource BoxStyle}" Text="{Binding ElementName=myListView, Path=SelectedItem.Surname}"/>
                             </StackPanel>
-                            <StackPanel Canvas.Left="141" Canvas.Top="60" HorizontalAlignment="Left" VerticalAlignment="Top">
-                                <TextBlock Text="Имя"/>
-                                <TextBox Name="NameBox" TextWrapping="Wrap" Width="100" Height="32" Text="{Binding ElementName=myListView, Path=SelectedItem.Name}"/>
+                            <StackPanel Canvas.Left="141" Canvas.Top="78" HorizontalAlignment="Center" VerticalAlignment="Top">
+                                <TextBlock Text="Имя"  Style="{StaticResource BlockStyle}"/>
+                                <TextBox Name="NameBox" Style="{StaticResource BoxStyle}" Text="{Binding ElementName=myListView, Path=SelectedItem.Name}"/>
                             </StackPanel>
-                            <StackPanel Canvas.Left="281" Canvas.Top="10" HorizontalAlignment="Left" VerticalAlignment="Top">
-                                <TextBlock Text="Отчество"/>
-                                <TextBox Name="PatronymicBox" TextWrapping="Wrap" Width="100" Height="31" Text="{Binding ElementName=myListView, Path=SelectedItem.Patronymic}"/>
+                            <StackPanel Canvas.Left="281" HorizontalAlignment="Center" VerticalAlignment="Top" Canvas.Top="16">
+                                <TextBlock Text="Отчество"  Style="{StaticResource BlockStyle}"/>
+                                <TextBox Name="PatronymicBox" Style="{StaticResource BoxStyle}" Text="{Binding ElementName=myListView, Path=SelectedItem.Patronymic}"/>
                             </StackPanel>
-                            <StackPanel Canvas.Left="281" Canvas.Top="60" HorizontalAlignment="Left" VerticalAlignment="Top">
-                                <TextBlock Text="Номер телефона"/>
-                                <TextBox Name="NumberPhoneBox" Width="100" TextWrapping="Wrap" Height="32" Text="{Binding ElementName=myListView, Path=SelectedItem.NumberPhone}"/>
+                            <StackPanel Canvas.Left="281" Canvas.Top="78" HorizontalAlignment="Center" VerticalAlignment="Top">
+                                <TextBlock Text="Номер телефона" Style="{StaticResource BlockStyle}"/>
+                                <TextBox Name="NumberPhoneBox" Style="{StaticResource BoxStyle}" Text="{Binding ElementName=myListView, Path=SelectedItem.NumberPhone}"/>
                             </StackPanel>
-                            <StackPanel Canvas.Left="417" HorizontalAlignment="Left" VerticalAlignment="Top" Canvas.Top="60">
-                                <TextBlock Text="Адрес"/>
-                                <TextBox Name="AddressBox" TextWrapping="Wrap" Width="100" Height="33" Text="{Binding ElementName=myListView, Path=SelectedItem.Address}"/>
+                            <StackPanel Canvas.Left="415" HorizontalAlignment="Center" VerticalAlignment="Top" Canvas.Top="78">
+                                <TextBlock Text="Адрес"  Style="{StaticResource BlockStyle}"/>
+                                <TextBox x:Name="AddressBox" Style="{StaticResource BoxStyle}" Text="{Binding SelectedItem.Address, ElementName=myListView}"/>
                             </StackPanel>
-                            <TextBlock  Canvas.Left="415" HorizontalAlignment="Right" VerticalAlignment="Top" Canvas.Top="10">
-                                <Run Text="Счёт: "/>
+                            <TextBlock  Canvas.Left="415" HorizontalAlignment="Center" VerticalAlignment="Top" Canvas.Top="16">
+                                <Run Text="Счёт: " Foreground="#2F4F4F" FontWeight="Bold"/>
                                 <TextBox Name="BillBox" Text="{Binding SelectedItem.Bill, ElementName=myListView}" IsReadOnly="True"/>
                                 <!--<TextBlock Name="BillBox" Text="{Binding SelectedItem.Bill, ElementName=myListView}"/>-->
                             </TextBlock>
-                            <TextBlock  Canvas.Left="415" HorizontalAlignment="Right" VerticalAlignment="Top" Canvas.Top="30">
-                                <Run Text="Депозитный счёт: "/>
+                            <TextBlock  Canvas.Left="415" HorizontalAlignment="Center" VerticalAlignment="Top" Canvas.Top="38">
+                                <Run Text="Депозитный счёт: " Foreground="#2F4F4F" FontWeight="Bold"/>
                                  <TextBox Name="DepBillBox" Text="{Binding SelectedItem.DepBill, ElementName=myListView}" IsReadOnly="True"/>
                                 <!--<TextBlock Name="DepBillBox" Text="{Binding SelectedItem.DepBill, ElementName=myListView}"/>-->
                             </TextBlock>
@@ -94,7 +135,7 @@
                             <!--<Button Content="Добавить" Height="20" Width="80" Canvas.Left="681" HorizontalAlignment="Left" VerticalAlignment="Center" Canvas.Top="15"/>
                             <Button Content="Удалить" Height="20" Width="80" Canvas.Left="681" HorizontalAlignment="Center" VerticalAlignment="Top" Canvas.Top="41"/>
                             <Button Content="Изменить" Height="20" Width="80" Canvas.Left="681" HorizontalAlignment="Center" VerticalAlignment="Top" Canvas.Top="69"/>-->
-                            <Border BorderBrush="DodgerBlue" CornerRadius="8,8,3,3" Height="109" Width="181" Canvas.Left="597" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Border BorderBrush="DodgerBlue" CornerRadius="8,8,3,3" Height="137" Width="308" Canvas.Left="597" HorizontalAlignment="Center" VerticalAlignment="Top">
                                 <Border.Background>
                                     <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
                                         <GradientStop Color="DarkTurquoise" Offset="0.0" />
@@ -103,31 +144,78 @@
                                     </LinearGradientBrush>
                                 </Border.Background>
                                 <Canvas>
-                                    <Button x:Name="AddClientButton" Content="Добавить" Command="{Binding Path=CreateNewClientCommand}" CommandParameter="{Binding Selected}" Height="20" Width="80" Canvas.Left="50" HorizontalAlignment="Left" VerticalAlignment="Top" Canvas.Top="10"/>
-                                    <Button x:Name="DeleteClientButton" Content="Удалить" Command="{Binding Path=DeleteClientCommand}" CommandParameter="{Binding Selected}" Height="20" Width="80" Canvas.Left="50" HorizontalAlignment="Left" VerticalAlignment="Top" Canvas.Top="40"/>
-                                    <Button Content="Изменить" Command="{Binding Path=ChangeClientCommand}" CommandParameter="{Binding Selected}" Height="20" Width="80" Canvas.Left="50" HorizontalAlignment="Left" VerticalAlignment="Top" Canvas.Top="80"/>
+
+                                    <Button x:Name="AddClientButton" Content="Добавить" Command="{Binding Path=CreateNewClientCommand}" CommandParameter="{Binding Selected}" Height="36" Width="126" Canvas.Left="91" HorizontalAlignment="Left" VerticalAlignment="Top" Canvas.Top="4">
+                                        <!--<Button.Style>
+                                            <Style TargetType="Button">
+                                                <Setter Property="TextElement.FontFamily" Value="Fonts/#Dosis"/>
+                                                <Setter Property="Background" Value="#228B22"/>
+                                                <Setter Property="Cursor" Value="Hand"/>
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Background" Value="#008000"/>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border CornerRadius="12" Background="{TemplateBinding Background}">
+                                                    <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Button.Template>
+
+                                        <Button.Triggers>
+                                            <EventTrigger RoutedEvent="Button.Click">
+                                                <BeginStoryboard>
+                                                    <Storyboard>
+                                                        <DoubleAnimation Storyboard.TargetName="progressBar" Storyboard.TargetProperty="Value"
+                                                        From="0" To="100" Duration="0:0:3"/>
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </EventTrigger>
+                                        </Button.Triggers>-->
+                                    </Button>
+                                    <Button x:Name="DeleteClientButton" Content="Удалить" Command="{Binding Path=DeleteClientCommand}" CommandParameter="{Binding Selected}" Height="36" Width="126" Canvas.Left="91" HorizontalAlignment="Left" VerticalAlignment="Top" Canvas.Top="45"/>
+                                    <Button Content="Изменить" Command="{Binding Path=ChangeClientCommand}" CommandParameter="{Binding Selected}" Height="36" Width="126" Canvas.Left="91" HorizontalAlignment="Left" VerticalAlignment="Top" Canvas.Top="91"/>
                                 </Canvas>
                             </Border>
                         </Canvas>
                     </Border>
                 </GroupBox>
-                <GroupBox Grid.Row="1" Header="Клиенты">
+
+                <GroupBox Header="Клиенты" Margin="0,179,0,0"  Foreground="#E6E6FA" FontWeight="Medium" Grid.RowSpan="2">
                     <ListView Name="myListView" ItemsSource="{Binding Clients}" SelectedItem="{Binding Selected}">
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn Header="ID" DisplayMemberBinding="{Binding Path=ID}"/>
-                                <GridViewColumn Header="Почта" DisplayMemberBinding="{Binding Path=Email}"/>
-                                <GridViewColumn Header="Фамилия" DisplayMemberBinding="{Binding Path=Surname}"/>
-                                <GridViewColumn Header="Имя" DisplayMemberBinding="{Binding Path=Name}"/>
-                                <GridViewColumn Header="Отчество" DisplayMemberBinding="{Binding Path=Patronymic}"/>
-                                <GridViewColumn Header="Номер телефона" DisplayMemberBinding="{Binding Path=NumberPhone}"/>
-                                <GridViewColumn Header="Адрес" DisplayMemberBinding="{Binding Path=Address}"/>
-                                <GridViewColumn x:Name="Check" Header="Счёт" DisplayMemberBinding="{Binding Path=Bill}"/>
-                                <GridViewColumn Header="Деп. Счёт" DisplayMemberBinding="{Binding Path=DepBill}"/>
+                                <GridViewColumn Header="ID" DisplayMemberBinding="{Binding Path=ID}" Width="Auto"/>
+                                <GridViewColumn Header="Почта" DisplayMemberBinding="{Binding Path=Email}" Width="Auto"/>
+                                <GridViewColumn Header="Фамилия" DisplayMemberBinding="{Binding Path=Surname}" Width="Auto"/>
+                                <GridViewColumn Header="Имя" DisplayMemberBinding="{Binding Path=Name}" Width="Auto"/>
+                                <GridViewColumn Header="Отчество" DisplayMemberBinding="{Binding Path=Patronymic}" Width="Auto"/>
+                                <GridViewColumn Header="Номер телефона" DisplayMemberBinding="{Binding Path=NumberPhone}" Width="Auto"/>
+                                <GridViewColumn Header="Адрес" DisplayMemberBinding="{Binding Path=Address}" Width="Auto"/>
+                                <GridViewColumn x:Name="Check" Header="Счёт" DisplayMemberBinding="{Binding Path=Bill}" Width="Auto"/>
+                                <GridViewColumn Header="Деп. Счёт" DisplayMemberBinding="{Binding Path=DepBill}" Width="Auto"/>
                             </GridView>
                         </ListView.View>
                     </ListView>
                 </GroupBox>
+                <ComboBox x:Name="ChangeWorkerComboBox" VerticalContentAlignment="Center" FontSize="15" FontWeight="Medium" HorizontalContentAlignment="Center" 
+                          HorizontalAlignment="Left" VerticalAlignment="Top" Width="140" Height="29" Margin="985,38,0,0">
+                    <TextBlock Text="Менеджер">
+                        <TextBlock.InputBindings>
+                            <MouseBinding MouseAction="LeftClick" Command="{Binding ChooseManagerCommand}"/>
+                        </TextBlock.InputBindings>
+                    </TextBlock>
+                    <TextBlock Text="Консультант">
+                        <TextBlock.InputBindings>
+                            <MouseBinding MouseAction="LeftClick" Command="{Binding ChooseConsultantCommand}"/>
+                        </TextBlock.InputBindings>
+                    </TextBlock>
+                </ComboBox>
             </Grid>
         </DockPanel>
     </Grid>
