@@ -29,6 +29,7 @@ using System.Data;
 using Faker;
 using System.Net;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace StartCS_Delegate.ViewModels
 {
@@ -70,6 +71,7 @@ namespace StartCS_Delegate.ViewModels
             {
                 ManagerWindow = new ManagerWindow();
                 ManagerWindow.ChangeWorkerComboBox.SelectedIndex = 0;
+                ManagerWindow.WorkerImage.Source = new BitmapImage(new Uri("/Images/Manager.png", UriKind.Relative));
                 ManagerWindow.MainGrid.Background = new SolidColorBrush(Colors.MediumTurquoise);
                 ManagerWindow.Show();
                 MainWindow.Close();
@@ -90,6 +92,7 @@ namespace StartCS_Delegate.ViewModels
                 ManagerWindow = new ManagerWindow();
                 //ManagerWindow.ChoosenWorkerBlock.Text = "Консультант";
                 ManagerWindow.ChangeWorkerComboBox.SelectedIndex = 1;
+                ManagerWindow.WorkerImage.Source = new BitmapImage(new Uri("/Images/Consultant.png", UriKind.Relative));
                 ManagerWindow.MainGrid.Background = new SolidColorBrush(Colors.LightSeaGreen);
                 ManagerWindow.IDBox.IsReadOnly = true;
                 ManagerWindow.EmailBox.IsReadOnly = true;
@@ -124,7 +127,6 @@ namespace StartCS_Delegate.ViewModels
             {
                 if (newClient.Bill == String.Empty && newClient.DepBill == String.Empty)
                 {
-                    MessageWindow = new MessageWindow();
                     newClient.Bill = "Закрытый";
                     newClient.DepBill = "Закрытый";
                     Clients.Add(newClient);
@@ -315,6 +317,7 @@ namespace StartCS_Delegate.ViewModels
             ManagerWindow = new ManagerWindow();
             //ManagerWindow.ChoosenWorkerBlock.Text = "Консультант";
             ManagerWindow.ChangeWorkerComboBox.SelectedIndex = 1;
+            ManagerWindow.WorkerImage.Source = new BitmapImage(new Uri("/Images/Consultant.png", UriKind.Relative));
             ManagerWindow.MainGrid.Background = new SolidColorBrush(Colors.LightSeaGreen);
             ManagerWindow.IDBox.IsReadOnly = true;
             ManagerWindow.EmailBox.IsReadOnly = true;
@@ -669,6 +672,8 @@ namespace StartCS_Delegate.ViewModels
             //ManagerWindow.ChoosenWorkerBlock.Text = "Консультант";
             ManagerWindow.ChangeWorkerComboBox.SelectedIndex = 1;
             ManagerWindow.MainGrid.Background = new SolidColorBrush(Colors.LightSeaGreen);
+            ManagerWindow.WorkerImage.Source = new BitmapImage(new Uri("/Images/Consultant.png", UriKind.Relative));
+            //ManagerWindow.AddClientButton.Background = new SolidColorBrush((Color)Colors.DarkGreen);
             ManagerWindow.IDBox.IsReadOnly = true;
             ManagerWindow.EmailBox.IsReadOnly = true;
             ManagerWindow.SurnameBox.IsReadOnly = true;
@@ -687,6 +692,8 @@ namespace StartCS_Delegate.ViewModels
             //ManagerWindow.ChoosenWorkerBlock.Text = "Менеджер";
             ManagerWindow.ChangeWorkerComboBox.SelectedIndex = 0;
             ManagerWindow.MainGrid.Background = new SolidColorBrush(Colors.MediumTurquoise);
+            ManagerWindow.WorkerImage.Source = new BitmapImage(new Uri("/Images/Manager.png", UriKind.Relative)); 
+            //ManagerWindow.AddClientButton.Background = new SolidColorBrush ((Color)Colors.Green);
             ManagerWindow.IDBox.IsReadOnly = false;
             ManagerWindow.EmailBox.IsReadOnly = false;
             ManagerWindow.SurnameBox.IsReadOnly = false;
@@ -811,7 +818,12 @@ namespace StartCS_Delegate.ViewModels
             
             XmlSerialize(Clients);
             //WriteToFileHistoryLog($"\nИзменения внесены {ManagerWindow.ChoosenWorkerBlock.Text}ом");
-            WriteToFileHistoryLog($"\nИзменения внесены {ManagerWindow.ChangeWorkerComboBox.SelectedIndex}ом");
+
+            if (Convert.ToInt32(ManagerWindow.ChangeWorkerComboBox.SelectedIndex) == 0)
+            { WriteToFileHistoryLog("\nИзменения внесены Менеджером"); }
+            else WriteToFileHistoryLog("\nИзменения внесены Консультантом");
+
+            //WriteToFileHistoryLog($"\nИзменения внесены {ManagerWindow.ChangeWorkerComboBox.SelectedIndex}ом");
 
             //ManagerWindow.myListView.Items.Refresh();
             //Clients.Clear();
