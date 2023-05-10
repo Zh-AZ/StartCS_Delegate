@@ -6,10 +6,58 @@
         xmlns:local="clr-namespace:StartCS_Delegate.Views.ManagerWindow"
         xmlns:vm="clr-namespace:StartCS_Delegate.ViewModels"
         mc:Ignorable="d"
-        Title="ManagerWindow" Height="585" Width="1040">
+        Title="ManagerWindow" Height="585" Width="1040" MaxHeight="585" MaxWidth="1040" MinHeight="585" MinWidth="1040">
     <Window.DataContext>
         <vm:MainWindowViewModel x:Name="ViewModel"/>
     </Window.DataContext>
+
+    <Window.Resources>
+        <Style x:Key="ComboBoxTest" TargetType="{x:Type ComboBox}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <ToggleButton Grid.Column="2" Focusable="false" IsChecked="{Binding Path=IsDropDownOpen,Mode=TwoWay,RelativeSource={RelativeSource TemplatedParent}}" >
+                                <ToggleButton.Template>
+                                    <ControlTemplate>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="5*" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <Border x:Name="Border"  Grid.ColumnSpan="2" CornerRadius="5" Background="Beige" BorderBrush="Black" BorderThickness="1" />
+                                            <Border Grid.Column="0" CornerRadius="5,0,0,5"  Margin="1"  Background="AliceBlue"  BorderBrush="Black" BorderThickness="0,0,1,0" />
+                                            <Path x:Name="Arrow" Grid.Column="1"  Fill="Orange" HorizontalAlignment="Center" VerticalAlignment="Center" Data="M 0 0 L 4 4 L 8 0 Z"/>
+                                        </Grid>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="ToggleButton.IsMouseOver" Value="true">
+                                                <Setter TargetName="Border" Property="Background" Value="Green" />
+                                            </Trigger>
+                                            <Trigger Property="ToggleButton.IsChecked" Value="true">
+                                                <Setter TargetName="Border" Property="Background" Value="Green" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
+                            <ContentPresenter Name="ContentSite" IsHitTestVisible="False"  Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" Margin="3"  />
+                            <TextBox x:Name="PART_EditableTextBox" Visibility="Hidden" IsReadOnly="{TemplateBinding IsReadOnly}"/>
+                            <Popup Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True"  Focusable="False" PopupAnimation="Slide">
+                                <Grid  Name="DropDown" SnapsToDevicePixels="True" MinWidth="{TemplateBinding ActualWidth}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                                    <Border x:Name="DropDownBorder" Background="#E0FFFF" />
+                                    <ScrollViewer SnapsToDevicePixels="True">
+                                        <StackPanel IsItemsHost="True" />
+                                    </ScrollViewer>
+                                </Grid>
+                            </Popup>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
 
     <Grid x:Name="MainGrid" Background="#20B2AA" Margin="0,0,0,-6">
 
@@ -17,15 +65,27 @@
             <DockPanel.InputBindings>
                 <MouseBinding Command="{Binding Path=ClearFocusCommand}" MouseAction="LeftClick"/>
             </DockPanel.InputBindings>
-            <Menu DockPanel.Dock="Top" Height="27">
+            <Menu DockPanel.Dock="Top" Height="27" Background="#7B68EE" Foreground="#F0FFFF" FontWeight="Medium" FontSize="15">
                 <MenuItem Header="Выход" Height="27">
-                    <MenuItem Header="Выход"/>
+                    <MenuItem Header="Выход" Foreground="#DC143C">
+                        <MenuItem.Icon>
+                            <Image Source="/Images/Exit.png" Width="15" Height="15"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
                 </MenuItem>
                 <MenuItem Name="OpenTransferWindowButton" Header="Транзакции" Height="27">
-                    <MenuItem Header="Транзакции" Command="{Binding Path=OpenTransactionWindowCommand}"/>
+                    <MenuItem Header="Транзакции" Foreground="#B8860B" Command="{Binding Path=OpenTransactionWindowCommand}">
+                        <MenuItem.Icon>
+                            <Image Source="/Images/Transaction.png" Width="18" Height="18"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
                 </MenuItem>
                 <MenuItem Header="Журнал истроии" Height="27">
-                    <MenuItem Header="Журнал истории" Command="{Binding Path=OpenHistoryWindowCommand}"/>
+                    <MenuItem Header="Журнал истории" Foreground="Green" Command="{Binding Path=OpenHistoryWindowCommand}">
+                        <MenuItem.Icon>
+                            <Image Source="/Images/HistoryLog.png" Width="16" Height="16"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
                 </MenuItem>
             </Menu>
 
@@ -66,7 +126,7 @@
                     <Border Width="700" Height="35" Background="#F08080" Margin="75,15,0,0" CornerRadius="20"/>
                 </StackPanel>-->
 
-                <GroupBox Grid.Row="0" Header="Данные клиента" Foreground="#E6E6FA" FontWeight="Medium" Margin="0,0,0,10">
+                <GroupBox Grid.Row="0" Header="Данные клиента" Foreground="#F0FFFF" FontWeight="Medium" Margin="0,0,0,10">
                     <Border BorderBrush="DodgerBlue" CornerRadius="8,8,3,3" Margin="0,1,0,-2">
                         <Border.Background>
                             <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
@@ -110,12 +170,12 @@
                                 <TextBox Name="NameBox" Style="{StaticResource BoxStyle}" Text="{Binding ElementName=myListView, Path=SelectedItem.Name}"/>
                             </StackPanel>
                             <StackPanel Canvas.Left="281" HorizontalAlignment="Center" VerticalAlignment="Top" Canvas.Top="16">
-                                <TextBlock Text="Отчество"  Style="{StaticResource BlockStyle}"/>
-                                <TextBox Name="PatronymicBox" Style="{StaticResource BoxStyle}" Text="{Binding ElementName=myListView, Path=SelectedItem.Patronymic}"/>
+                                <TextBlock Text="Номер телефона"  Style="{StaticResource BlockStyle}"/>
+                                <TextBox Name="NumberPhoneBox" Style="{StaticResource BoxStyle}" Text="{Binding ElementName=myListView, Path=SelectedItem.NumberPhone}"/>
                             </StackPanel>
                             <StackPanel Canvas.Left="281" Canvas.Top="78" HorizontalAlignment="Center" VerticalAlignment="Top">
-                                <TextBlock Text="Номер телефона" Style="{StaticResource BlockStyle}"/>
-                                <TextBox Name="NumberPhoneBox" Style="{StaticResource BoxStyle}" Text="{Binding ElementName=myListView, Path=SelectedItem.NumberPhone}"/>
+                                <TextBlock Text="Отчесвто" Style="{StaticResource BlockStyle}"/>
+                                <TextBox Name="PatronymicBox" Style="{StaticResource BoxStyle}" Text="{Binding ElementName=myListView, Path=SelectedItem.Patronymic}"/>
                             </StackPanel>
                             <StackPanel Canvas.Left="415" HorizontalAlignment="Center" VerticalAlignment="Top" Canvas.Top="78">
                                 <TextBlock Text="Адрес"  Style="{StaticResource BlockStyle}"/>
@@ -123,7 +183,11 @@
                             </StackPanel>
                             <TextBlock  Canvas.Left="415" HorizontalAlignment="Center" VerticalAlignment="Top" Canvas.Top="16">
                                 <Run Text="Счёт: " Foreground="#2F4F4F" FontWeight="Bold"/>
-                                <TextBox Name="BillBox" Text="{Binding SelectedItem.Bill, ElementName=myListView}" IsReadOnly="True"/>
+                                <TextBox Name="BillBox" Text="{Binding SelectedItem.Bill, ElementName=myListView}" IsReadOnly="True">
+                                     <!--<TextBox.InputBindings>
+                                        <MouseBinding Command="{Binding Path=ChooseColorBillBoxCommand}" MouseAction="LeftClick"/>
+                                     </TextBox.InputBindings>-->
+                                </TextBox>
                                 <!--<TextBlock Name="BillBox" Text="{Binding SelectedItem.Bill, ElementName=myListView}"/>-->
                             </TextBlock>
                             <TextBlock  Canvas.Left="415" HorizontalAlignment="Center" VerticalAlignment="Top" Canvas.Top="38">
@@ -177,8 +241,35 @@
                     </Border>
                 </GroupBox>
 
-                <GroupBox Header="Клиенты" Margin="0,179,0,0"  Foreground="#E6E6FA" FontWeight="Medium" Grid.RowSpan="2">
-                    <ListView Name="myListView" ItemsSource="{Binding Clients}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" SelectedItem="{Binding Selected}">
+                <GroupBox Header="Клиенты" Margin="0,179,0,0"  Foreground="#F0FFFF" FontWeight="Medium" Grid.RowSpan="2">
+                    <ListView Name="myListView" ItemsSource="{Binding Clients}" Background="Beige" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" SelectedItem="{Binding Selected}">
+                        <ListView.Resources>
+
+                            <Style TargetType="{x:Type GridViewColumnHeader}">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type GridViewColumnHeader}">
+                                            <Border BorderThickness="0,0,0,1" BorderBrush="Black" Background="#A9A9A9">
+                                                <TextBlock x:Name="ContentHeader" Text="{TemplateBinding Content}" Padding="5,5,5,0" Width="{TemplateBinding Width}" TextAlignment="Center" />
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="OverridesDefaultStyle" Value="True" />
+                                <Setter Property="Foreground" Value="Black" />
+                                <Setter Property="FontFamily" Value="Segoe UI" />
+                                <Setter Property="FontSize" Value="12" />
+                            </Style>
+
+                            <Style TargetType="{x:Type ListViewItem}">
+                                <Style.Triggers>
+                                    <Trigger Property="IsSelected" Value="true" >
+                                        <Setter Property="Foreground" Value="#191970" />
+                                        <Setter Property="Background" Value="#D8BFD8" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ListView.Resources>
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn Header="ID" DisplayMemberBinding="{Binding Path=ID}" Width="Auto"/>
@@ -194,9 +285,9 @@
                         </ListView.View>
                     </ListView>
                 </GroupBox>
-                <ComboBox x:Name="ChangeWorkerComboBox" VerticalContentAlignment="Center" FontSize="15" FontWeight="Medium" HorizontalContentAlignment="Center" 
+                <ComboBox x:Name="ChangeWorkerComboBox" Style="{StaticResource ComboBoxTest}" VerticalContentAlignment="Center" FontSize="15" FontWeight="Medium" HorizontalContentAlignment="Center" 
                           HorizontalAlignment="Left" VerticalAlignment="Top" Width="140" Height="29" Margin="864,28,0,0">
-                    <TextBlock Text="Менеджер">
+                    <TextBlock Text="Менеджер" Foreground="#48D1CC">
                         <TextBlock.InputBindings>
                             <MouseBinding MouseAction="LeftClick" Command="{Binding ChooseManagerCommand}"/>
                         </TextBlock.InputBindings>
@@ -209,7 +300,7 @@
                             </ControlTemplate>
                         </Button.Template>
                     </Button>-->
-                    <TextBlock Text="Консультант">
+                    <TextBlock Text="Консультант" Foreground="#20B2AA">
                         <TextBlock.InputBindings>
                             <MouseBinding MouseAction="LeftClick" Command="{Binding ChooseConsultantCommand}"/>
                         </TextBlock.InputBindings>

@@ -43,7 +43,7 @@ namespace StartCS_Delegate.ViewModels
         static TransactionWindow TransactionWindow;
         static HistoryWindow HistoryWindow;
         static MessageWindow MessageWindow;
-        
+
         private static Client _Selected;
         public Client Selected
         {
@@ -87,7 +87,7 @@ namespace StartCS_Delegate.ViewModels
 
         private void ProgressBar_ValueChangedForConsultant(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (MainWindow.progressBar.Value == 100) 
+            if (MainWindow.progressBar.Value == 100)
             {
                 ManagerWindow = new ManagerWindow();
                 //ManagerWindow.ChoosenWorkerBlock.Text = "Консультант";
@@ -170,7 +170,6 @@ namespace StartCS_Delegate.ViewModels
         private bool CanDeleteClientCommandExecute(object p) => p is Client client && Clients.Contains(client);
         private void OnDeleteClientCommandExecute(object p)
         {
-            MessageWindow = new MessageWindow();
             if (!(p is Client client)) return;
             Clients.Remove(client);
             XmlSerialize(Clients);
@@ -225,15 +224,15 @@ namespace StartCS_Delegate.ViewModels
         private bool CanClearFocusCommadExecute(object p) => true;
         private void OnClearFocusCommandExecute(object p)
         {
-            if (ManagerWindow != null) 
+            if (ManagerWindow != null)
             {
                 if (ManagerWindow.myListView.SelectedItems.Count != 0)
                 {
                     ManagerWindow.myListView.SelectedItems[0] = false;
                 }
             }
-            
-            if (TransactionWindow != null) 
+
+            if (TransactionWindow != null)
             {
                 TransactionWindow.SearchBox.Text = "";
                 TransactionWindow.FoundBalanceBlock.Text = "";
@@ -274,7 +273,7 @@ namespace StartCS_Delegate.ViewModels
         {
             HistoryWindow = new HistoryWindow();
             //HistoryWindow.HistoryBlock.Text = await ReadToFileHistoryLog();
-          
+
             //HistoryWindow.HistoryBlock.Text = Convert.ToString(ReadFile());
             //HistoryWindow.HistoryKistBox.Items.Add(await ReadToFileHistoryLog());
             ReadFile();
@@ -284,11 +283,11 @@ namespace StartCS_Delegate.ViewModels
 
         public ICommand ClearHistoryCommand { get; }
         private bool CanClearHistoryCommandExecute(object p) => true;
-        async private void OnClearHistoryCommandExecute( object p)
+        async private void OnClearHistoryCommandExecute(object p)
         {
             System.IO.File.WriteAllText(historyLogPath, string.Empty);
             //HistoryWindow.HistoryBlock.Text = await ReadToFileHistoryLog();
-       
+
             //HistoryWindow.HistoryBlock.Text = Convert.ToString(ReadFile());
 
             //HistoryWindow.HistoryKistBox.Items.Add(await ReadToFileHistoryLog());
@@ -376,7 +375,7 @@ namespace StartCS_Delegate.ViewModels
                     {
                         TransactionWindow.OpenDepositButton.Content = "Открыть";
                     }
-                    else 
+                    else
                     { TransactionWindow.OpenDepositButton.Content = "Закрыть"; }
                     if (client.Bill == "Закрытый")
                     {
@@ -478,7 +477,7 @@ namespace StartCS_Delegate.ViewModels
         private bool CanSearchIDFromToCommandExecute(object p) => true;
         private void OnSearchIDFromToCommandExecute(object p)
         {
-            foreach (Client client in Clients) 
+            foreach (Client client in Clients)
             {
                 if (TransactionWindow.FromAccountTransaction.Text == client.ID && TransactionWindow.FromAccountTransaction.Text != String.Empty
                     && TransactionWindow.ToAccountTransaction.Text != string.Empty)
@@ -488,13 +487,13 @@ namespace StartCS_Delegate.ViewModels
                 }
             }
 
-            foreach (Client client in Clients) 
+            foreach (Client client in Clients)
             {
                 if (TransactionWindow.ToAccountTransaction.Text == client.ID && TransactionWindow.ToAccountTransaction.Text != String.Empty
                    && TransactionWindow.FromAccountTransaction.Text != String.Empty)
                 {
                     TransactionWindow.ToIDDepositBox.Text = client.DepBill;
-                    TransactionWindow.ToIDNonDepositBox.Text= client.Bill;
+                    TransactionWindow.ToIDNonDepositBox.Text = client.Bill;
                 }
             }
         }
@@ -580,7 +579,7 @@ namespace StartCS_Delegate.ViewModels
             }
 
             foreach (Client client in Clients)
-            { 
+            {
                 if (client.DepBill == "Закрытый") { ExistToDepBill = false; }
 
                 if (TransactionWindow.ToAccountTransaction.Text == client.ID && TransactionWindow.ToAccountTransaction.Text != String.Empty
@@ -620,8 +619,8 @@ namespace StartCS_Delegate.ViewModels
                         WriteToFileHistoryLog(MessageWindow.MessageBlock.Text.ToString());
                         MessageWindow.ShowDialog();
                     }
-                    else 
-                    { 
+                    else
+                    {
                         client.DepBill = "Закрытый";
                         MessageWindow.MessageBlock.Text = $"\nдепозитный счёт {client} закрыт";
                         WriteToFileHistoryLog(MessageWindow.MessageBlock.Text.ToString());
@@ -632,7 +631,7 @@ namespace StartCS_Delegate.ViewModels
             SearchCommandMethod();
             XmlSerialize(Clients);
         }
-         
+
         /// <summary>
         /// Открытие или закрытие счёта найденного по ID клиенту
         /// </summary>
@@ -652,7 +651,7 @@ namespace StartCS_Delegate.ViewModels
                         WriteToFileHistoryLog(MessageWindow.MessageBlock.Text.ToString());
                         MessageWindow.ShowDialog();
                     }
-                    else 
+                    else
                     {
                         client.Bill = "Закрытый";
                         MessageWindow.MessageBlock.Text = $"\nсчёт {client} закрыт";
@@ -682,7 +681,7 @@ namespace StartCS_Delegate.ViewModels
             ManagerWindow.AddressBox.IsReadOnly = true;
             ManagerWindow.OpenTransferWindowButton.IsEnabled = false;
             ManagerWindow.AddClientButton.IsEnabled = false;
-            ManagerWindow.DeleteClientButton.IsEnabled = false; 
+            ManagerWindow.DeleteClientButton.IsEnabled = false;
         }
 
         public ICommand ChooseManagerCommand { get; }
@@ -692,7 +691,7 @@ namespace StartCS_Delegate.ViewModels
             //ManagerWindow.ChoosenWorkerBlock.Text = "Менеджер";
             ManagerWindow.ChangeWorkerComboBox.SelectedIndex = 0;
             ManagerWindow.MainGrid.Background = new SolidColorBrush(Colors.MediumTurquoise);
-            ManagerWindow.WorkerImage.Source = new BitmapImage(new Uri("/Images/Manager.png", UriKind.Relative)); 
+            ManagerWindow.WorkerImage.Source = new BitmapImage(new Uri("/Images/Manager.png", UriKind.Relative));
             //ManagerWindow.AddClientButton.Background = new SolidColorBrush ((Color)Colors.Green);
             ManagerWindow.IDBox.IsReadOnly = false;
             ManagerWindow.EmailBox.IsReadOnly = false;
@@ -703,6 +702,38 @@ namespace StartCS_Delegate.ViewModels
             ManagerWindow.OpenTransferWindowButton.IsEnabled = true;
             ManagerWindow.AddClientButton.IsEnabled = true;
             ManagerWindow.DeleteClientButton.IsEnabled = true;
+        }
+
+        public ICommand ChooseColorBillBoxCommand { get; }
+        private bool CanChooseColorBillBoxCommandExecute(object p) => true;
+        private void OnChooseColorBillBoxCommandExecute(object p)
+        {
+            if (ManagerWindow.BillBox.Text == "Закрытый" && ManagerWindow.BillBox.Text != String.Empty)
+            {
+                ManagerWindow.BillBox.Background = new SolidColorBrush(Colors.Red);
+            }
+            else ManagerWindow.BillBox.Background = new SolidColorBrush(Colors.White);
+
+            if (ManagerWindow.DepBillBox.Text == "Закрытый" && ManagerWindow.BillBox.Text != String.Empty)
+            {
+                ManagerWindow.DepBillBox.Background = new SolidColorBrush(Colors.Red);
+            }
+            else ManagerWindow.DepBillBox.Background = new SolidColorBrush(Colors.White);
+        }
+
+        public void TextChangedBillBox(object sender, TextChangedEventArgs args)
+        {
+            if (ManagerWindow.BillBox.Text == "Закрытый" && ManagerWindow.BillBox.Text != String.Empty)
+            {
+                ManagerWindow.BillBox.Background = new SolidColorBrush(Colors.Red);
+            }
+            else ManagerWindow.BillBox.Background = new SolidColorBrush(Colors.White);
+
+            if (ManagerWindow.DepBillBox.Text == "Закрытый" && ManagerWindow.BillBox.Text != String.Empty)
+            {
+                ManagerWindow.DepBillBox.Background = new SolidColorBrush(Colors.Red);
+            }
+            else ManagerWindow.DepBillBox.Background = new SolidColorBrush(Colors.White);
         }
 
         #endregion
@@ -774,6 +805,7 @@ namespace StartCS_Delegate.ViewModels
             ChooseConsultantCommand = new LambdaCommand(OnChooseConsultantCommandExecute, CanChooseConsultantCommandExecute);
             ChooseManagerCommand = new LambdaCommand(OnChooseManagerCommandExecute, CanChooseManagerCommandExecute);
             SearchIDFromToCommand = new LambdaCommand(OnSearchIDFromToCommandExecute, CanSearchIDFromToCommandExecute);
+            ChooseColorBillBoxCommand = new LambdaCommand(OnChooseColorBillBoxCommandExecute, CanChooseColorBillBoxCommandExecute);
 
             //Clients = new TrulyObservableCollection<Client>();
             //Clients = new FullyObservableCollection<Client>();
