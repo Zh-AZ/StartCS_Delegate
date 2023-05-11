@@ -12,5 +12,29 @@
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Lime.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>-->
+
+        <ResourceDictionary>
+            <Style x:Key="ButtonColorOpenStyle" TargetType="Button">
+                <Setter Property="TextElement.FontFamily" Value="Fonts/#Dosis"/>
+                <Setter Property="Background" Value="#006400"/> 
+                <Setter Property="Cursor" Value="Hand"/>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="#008000"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <Style x:Key="ButtonColorCloseStyle" TargetType="Button">
+                <Setter Property="TextElement.FontFamily" Value="Fonts/#Dosis"/>
+                <Setter Property="Background" Value="#B22222"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="#DC143C"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

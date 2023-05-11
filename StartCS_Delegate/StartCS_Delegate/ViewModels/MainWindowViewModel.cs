@@ -234,6 +234,20 @@ namespace StartCS_Delegate.ViewModels
 
             if (TransactionWindow != null)
             {
+                TransactionWindow.FoundBalanceBlock.Background = new SolidColorBrush(Colors.White);
+                TransactionWindow.DepFoundBalanceBlock.Background = new SolidColorBrush(Colors.White);
+                TransactionWindow.OpenNonDepositButton.Style = TransactionWindow.OpenDepositButton.TryFindResource("ButtonColorOpenStyle") as Style;
+                TransactionWindow.OpenNonDepositButton.Content = "";
+                TransactionWindow.OpenDepositButton.Style = TransactionWindow.OpenDepositButton.TryFindResource("ButtonColorOpenStyle") as Style;
+                TransactionWindow.OpenDepositButton.Content = "";
+                TransactionWindow.DepButton.Style = TransactionWindow.OpenDepositButton.TryFindResource("ButtonColorOpenStyle") as Style;
+                TransactionWindow.NonDepButton.Style = TransactionWindow.OpenDepositButton.TryFindResource("ButtonColorOpenStyle") as Style;
+                TransactionWindow.FromIDNonDepositBox.Background = new SolidColorBrush(Colors.White);
+                TransactionWindow.FromIDDepositBox.Background = new SolidColorBrush(Colors.White);
+                TransactionWindow.ToIDNonDepositBox.Background = new SolidColorBrush(Colors.White);
+                TransactionWindow.ToIDDepositBox.Background = new SolidColorBrush(Colors.White);
+
+                //TransactionWindow.DepButton.Style = TransactionWindow.OpenDepositButton.TryFindResource("ButtonColorCloseStyle") as Style;
                 TransactionWindow.SearchBox.Text = "";
                 TransactionWindow.FoundBalanceBlock.Text = "";
                 TransactionWindow.DepFoundBalanceBlock.Text = "";
@@ -374,15 +388,34 @@ namespace StartCS_Delegate.ViewModels
                     if (client.DepBill == "Закрытый")
                     {
                         TransactionWindow.OpenDepositButton.Content = "Открыть";
+                        TransactionWindow.OpenDepositButton.Style = TransactionWindow.OpenDepositButton.TryFindResource("ButtonColorOpenStyle") as Style;                       
+                        TransactionWindow.DepButton.Style = TransactionWindow.OpenDepositButton.TryFindResource("ButtonColorCloseStyle") as Style;
+                        TransactionWindow.DepFoundBalanceBlock.Background = new SolidColorBrush(Colors.DarkRed);
                     }
                     else
-                    { TransactionWindow.OpenDepositButton.Content = "Закрыть"; }
+                    { 
+                        TransactionWindow.OpenDepositButton.Content = "Закрыть";
+                        TransactionWindow.OpenDepositButton.Style = TransactionWindow.OpenDepositButton.TryFindResource("ButtonColorCloseStyle") as Style;
+                        TransactionWindow.DepButton.Style = TransactionWindow.OpenDepositButton.TryFindResource("ButtonColorOpenStyle") as Style;
+                        TransactionWindow.DepFoundBalanceBlock.Background = new SolidColorBrush(Colors.White);
+                    }
+
                     if (client.Bill == "Закрытый")
                     {
                         TransactionWindow.OpenNonDepositButton.Content = "Открыть";
+                        TransactionWindow.OpenNonDepositButton.Style = TransactionWindow.OpenDepositButton.TryFindResource("ButtonColorOpenStyle") as Style;
+                        TransactionWindow.NonDepButton.Style = TransactionWindow.OpenDepositButton.TryFindResource("ButtonColorCloseStyle") as Style;
+                        TransactionWindow.FoundBalanceBlock.Background = new SolidColorBrush(Colors.DarkRed);
                     }
-                    else { TransactionWindow.OpenNonDepositButton.Content = "Закрыть"; }
+                    else 
+                    { 
+                        TransactionWindow.OpenNonDepositButton.Content = "Закрыть";
+                        TransactionWindow.OpenNonDepositButton.Style = TransactionWindow.OpenDepositButton.TryFindResource("ButtonColorCloseStyle") as Style;                      
+                        TransactionWindow.NonDepButton.Style = TransactionWindow.OpenDepositButton.TryFindResource("ButtonColorOpenStyle") as Style;
+                        TransactionWindow.FoundBalanceBlock.Background = new SolidColorBrush(Colors.White);
+                    }
                 }
+
                 //if (!showed) 
                 //{
                 //    MessageBox.Show("Not found");
@@ -484,7 +517,22 @@ namespace StartCS_Delegate.ViewModels
                 {
                     TransactionWindow.FromIDNonDepositBox.Text = client.Bill;
                     TransactionWindow.FromIDDepositBox.Text = client.DepBill;
+
+                    if (TransactionWindow.FromIDNonDepositBox.Text == "Закрытый")
+                    {
+                        TransactionWindow.FromIDNonDepositBox.Background = new SolidColorBrush(Colors.DarkRed);
+                        //ManagerWindow.MainGrid.Background = new SolidColorBrush(Colors.LightSeaGreen);
+                    }
+                    else { TransactionWindow.FromIDNonDepositBox.Background = new SolidColorBrush(Colors.White); }
+
+                    if (TransactionWindow.FromIDDepositBox.Text == "Закрытый")
+                    {
+                        TransactionWindow.FromIDDepositBox.Background = new SolidColorBrush(Colors.DarkRed);
+                    }
+                    else { TransactionWindow.FromIDDepositBox.Background = new SolidColorBrush(Colors.White); }
+
                 }
+                else continue;
             }
 
             foreach (Client client in Clients)
@@ -494,7 +542,20 @@ namespace StartCS_Delegate.ViewModels
                 {
                     TransactionWindow.ToIDDepositBox.Text = client.DepBill;
                     TransactionWindow.ToIDNonDepositBox.Text = client.Bill;
+
+                    if (TransactionWindow.ToIDDepositBox.Text == "Закрытый")
+                    {
+                        TransactionWindow.ToIDDepositBox.Background = new SolidColorBrush(Colors.DarkRed);
+                    }
+                    else { TransactionWindow.ToIDDepositBox.Background = new SolidColorBrush(Colors.White); }
+
+                    if (TransactionWindow.ToIDNonDepositBox.Text == "Закрытый")
+                    {
+                        TransactionWindow.ToIDNonDepositBox.Background = new SolidColorBrush(Colors.DarkRed);
+                    }
+                    else { TransactionWindow.ToIDNonDepositBox.Background = new SolidColorBrush(Colors.White); }
                 }
+                else continue;
             }
         }
 
