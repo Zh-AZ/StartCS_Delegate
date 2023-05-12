@@ -11,11 +11,21 @@
         <vm:MainWindowViewModel x:Name="ViewModel"/>
     </Window.DataContext>
 
+    <Window.Resources>
+        <Style TargetType="TextBox">
+            <Setter Property="Background" Value="#FFF0F5"/>
+        </Style>
+    </Window.Resources>
+    
     <Grid>
         <DockPanel>
-            <Menu DockPanel.Dock="Top" Background="#7B68EE" Foreground="#F0FFFF" FontWeight="Medium" FontSize="15">
-                <MenuItem Header="Выход">
-                    <MenuItem Header="Выход" Command="{Binding Path=BackToManagerWindowCommand}"/>
+            <Menu DockPanel.Dock="Top" Background="#7B68EE" Foreground="#800000" FontWeight="Medium" FontSize="15">
+                <MenuItem Header="Закрыть">
+                    <MenuItem Header="Назад" Foreground="#DC143C" Command="{Binding Path=BackToManagerWindowCommand}">
+                        <MenuItem.Icon>
+                            <Image Source="/Images/Back.png" Width="15" Height="15"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
                 </MenuItem>
             </Menu>
 
@@ -180,7 +190,7 @@
                         </StackPanel>
 
                         <StackPanel Canvas.Left="250" Width="60" Canvas.Top="33" HorizontalAlignment="Left" VerticalAlignment="Top">
-                            <TextBlock Text="Deposit" Foreground="#FFF0F5" FontWeight="Medium" FontSize="13" TextAlignment="Center"/>
+                            <TextBlock Text="Деп.счёт" Foreground="#FFF0F5" FontWeight="Medium" FontSize="13" TextAlignment="Center"/>
                             <TextBox x:Name="FromIDDepositBox" FontWeight="Medium" TextAlignment="Center" Foreground="#696969" IsReadOnly="True"/>
                         </StackPanel>
 
@@ -190,7 +200,7 @@
                         </StackPanel>
 
                         <StackPanel Canvas.Left="250" Width="60" Canvas.Top="77" HorizontalAlignment="Left" VerticalAlignment="Center">
-                            <TextBlock Text="Deposit"  Foreground="#000000" FontWeight="Medium" FontSize="13" TextAlignment="Center"/>
+                            <TextBlock Text="Деп.счёт"  Foreground="#000000" FontWeight="Medium" FontSize="13" TextAlignment="Center"/>
                             <TextBox x:Name="ToIDDepositBox" FontWeight="Medium" Foreground="#696969" TextAlignment="Center" IsReadOnly="True"/>
                         </StackPanel>
                         <!--<Button Content="Search From" Canvas.Left="214" Canvas.Top="45"/>
@@ -228,7 +238,7 @@
                             <TextBox x:Name="DepTransactionAmountBlock" Width="100" FontWeight="Medium" Foreground="#696969" TextAlignment="Center"/>
                         </TextBlock>
 
-                        <Button x:Name="DepTransferButton" Command="{Binding Path=DepTransferCommand}"  Width="80" Height="25" Content="Деп.счёт" FontWeight="Medium"
+                        <Button x:Name="DepTransferButton" Command="{Binding Path=DepTransferCommand}"  Width="80" Height="25" Content="Перевести" FontWeight="Medium"
                                 Canvas.Left="693" Canvas.Top="87" HorizontalAlignment="Left" VerticalAlignment="Center">
                             <Button.Style>
                                 <Style TargetType="Button">
@@ -251,7 +261,7 @@
                                 </ControlTemplate>
                             </Button.Template>
                         </Button>
-                        <Button x:Name="TransferButton" Command="{Binding Path=TransferCommand}"  Width="80" Height="25" Content="Счёт" Canvas.Left="693" FontWeight="Medium"
+                        <Button x:Name="TransferButton" Command="{Binding Path=TransferCommand}"  Width="80" Height="25" Content="Перевести" Canvas.Left="693" FontWeight="Medium"
                                 Canvas.Top="38" HorizontalAlignment="Left" VerticalAlignment="Center">
                             <Button.Style>
                                 <Style TargetType="Button">

@@ -30,6 +30,7 @@ using Faker;
 using System.Net;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Documents;
 
 namespace StartCS_Delegate.ViewModels
 {
@@ -290,7 +291,21 @@ namespace StartCS_Delegate.ViewModels
 
             //HistoryWindow.HistoryBlock.Text = Convert.ToString(ReadFile());
             //HistoryWindow.HistoryKistBox.Items.Add(await ReadToFileHistoryLog());
+
             ReadFile();
+
+            //TextRange doc = new TextRange(HistoryWindow.HistoryControl.Document.ContentStart, HistoryWindow.HistoryControl.Document.ContentEnd);
+            //using (FileStream fs = new FileStream(historyPath, FileMode.Open))
+            //{
+            //    if (Path.GetExtension(historyPath).ToLower() == ".txt")
+            //    {
+            //        doc.Load(fs, DataFormats.Text);
+            //    }
+
+            //    //string text = await sr.ReadToEndAsync();
+            //    //return text;
+            //}
+
             ManagerWindow.Close();
             HistoryWindow.Show();
         }
@@ -305,9 +320,23 @@ namespace StartCS_Delegate.ViewModels
             //HistoryWindow.HistoryBlock.Text = Convert.ToString(ReadFile());
 
             //HistoryWindow.HistoryKistBox.Items.Add(await ReadToFileHistoryLog());
+
             HistoryWindow.HistoryControl.Items.Add(await ReadToFileHistoryLog());
             HistoryWindow.HistoryControl.Items.Clear();
-            //ReadFile();
+
+            //TextRange doc = new TextRange(HistoryWindow.HistoryControl.Document.ContentStart, HistoryWindow.HistoryControl.Document.ContentEnd);
+            //using (FileStream fs = new FileStream(historyPath, FileMode.Open))
+            //{
+            //    if (Path.GetExtension(historyPath).ToLower() == ".txt")
+            //    {
+            //        doc.Load(fs, DataFormats.Text);
+            //    }
+                
+            //    //string text = await sr.ReadToEndAsync();
+            //    //return text;
+            //}
+
+            ReadFile();
         }
 
         //string historyPath = @"..\Debug\HistoryLog.txt";
@@ -608,6 +637,7 @@ namespace StartCS_Delegate.ViewModels
                         WriteToFileHistoryLog(MessageWindow.MessageBlock.Text.ToString());
                         MessageWindow.ShowDialog();
                     }
+                    else { MessageBox.Show("Счёт клиента закрытый"); }
                 }
             }
             SearchCommandMethod();
@@ -627,7 +657,7 @@ namespace StartCS_Delegate.ViewModels
                 if (TransactionWindow.FromAccountTransaction.Text == client.ID && TransactionWindow.FromAccountTransaction.Text != String.Empty
                     && TransactionWindow.ToAccountTransaction.Text != String.Empty)
                 {
-                    if (TransactionWindow.DepTransactionAmountBlock.Text != String.Empty)
+                    if (TransactionWindow.DepTransactionAmountBlock.Text != String.Empty && client.Bill != "Закрытый")
                     {
                         int amount = int.Parse(TransactionWindow.DepTransactionAmountBlock.Text);
                         int clientBalance = int.Parse(client.DepBill) - amount;
@@ -654,7 +684,7 @@ namespace StartCS_Delegate.ViewModels
                         WriteToFileHistoryLog(MessageWindow.MessageBlock.Text.ToString());
                         MessageWindow.ShowDialog();
                     }
-                    else { MessageBox.Show("Счёт клиента закрытый"); }
+                    else { MessageBox.Show("Депозитный счёт клиента закрытый"); }
                 }
             }
             SearchCommandMethod();
@@ -823,12 +853,14 @@ namespace StartCS_Delegate.ViewModels
         void ReadFile()
         {
             var lines = File.ReadAllLines(historyPath).Reverse();
-            
+
             //string reverseStrings = File.ReadAllLines(secondHistoryPath)[0];
             //string[] list = new[] { };
             foreach (string line in lines)
             {
                 HistoryWindow.HistoryControl.Items.Add(line);
+                HistoryWindow.HistoryControl.Foreground = new SolidColorBrush(Colors.White);
+                
                 //HistoryWindow.HistoryKistBox.Items.Add(line);
 
                 //list.Add(line);
@@ -841,7 +873,7 @@ namespace StartCS_Delegate.ViewModels
             }
             //return "NON";
         }
-        
+
         string path = @"..\Debug\Client.xml"; //..\Publications\TravelBrochure.pdf
 
         public MainWindowViewModel()
