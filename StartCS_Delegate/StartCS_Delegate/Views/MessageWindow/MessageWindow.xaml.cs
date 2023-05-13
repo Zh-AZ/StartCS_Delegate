@@ -23,8 +23,29 @@ namespace StartCS_Delegate.Views.MessageWindow
         public MessageWindow()
         {
             InitializeComponent();
+            //this.Initialized += MessageWindow_Initialized;
             this.Loaded += Window_Loaded;
         }
+
+        //static int timerValue = 0;
+
+        //private void MessageWindow_Initialized(object sender, EventArgs e)
+        //{
+        //    Timer timer = new Timer();
+        //    timer.Interval = 1000;
+        //    timer.Enabled = true;
+        //    timer.Elapsed += new ElapsedEventHandler(TimerTick);
+        //    timer.Start();
+        //}
+
+        //private void TimerTick(object sender, ElapsedEventArgs e)
+        //{
+        //    if (timerValue <= 3)
+        //    {
+        //        timerValue += 1;
+        //        this.Background.Opacity = 1;
+        //    }
+        //}
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {

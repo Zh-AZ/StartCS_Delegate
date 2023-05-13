@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:StartCS_Delegate"
         xmlns:vm="clr-namespace:StartCS_Delegate.ViewModels"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" MaxHeight="450" MaxWidth="800" MinHeight="450" MinWidth="800">
+        Title="MainWindow" Height="450" Width="800" MaxHeight="450" MaxWidth="800" MinHeight="450" MinWidth="800" WindowStartupLocation="CenterScreen">
     <Window.DataContext>
         <vm:MainWindowViewModel x:Name="ViewModel"/>
     </Window.DataContext>
@@ -31,7 +31,7 @@
             </StackPanel>
         </Grid>
 
-        <ProgressBar Name="progressBar" Minimum="0" Maximum="100" Height="90" Margin="49,309,69,44" Background="#7B68EE" Foreground="#191970">
+        <ProgressBar Name="progressBar" Minimum="0" Visibility="Hidden" Maximum="100" Height="90" Margin="49,309,69,44" Background="#7B68EE" Foreground="#191970">
             <ProgressBar.Clip>
                 <RectangleGeometry RadiusX="20.5" RadiusY="20.5" Rect="10,3,650,40"/>
             </ProgressBar.Clip>

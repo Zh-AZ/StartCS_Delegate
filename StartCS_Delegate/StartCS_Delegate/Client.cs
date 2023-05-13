@@ -19,24 +19,11 @@ using System.Xml.Serialization;
 
 namespace StartCS_Delegate
 {
-    //[Serializable]  
     public class Client : INotifyPropertyChanged
     {
-        public delegate void Notify<in T>(T arg);
-        public event Notify<MessageBoxResult> NotifyMessage;
+        public delegate void History<in T, in Y, in I, in P, in R, in V, in L, in N>(T t, Y y, I i, P p, R r, V v, L l, N n);
+        public event History<string, string, string, string, string, string, string, string> SaveToHistoryLog;
         
-        //static HistoryWindow HistoryWindow;
-
-        //public ICommand OpenHistoryWindowCommand { get; set; }
-        //private bool CanOpenHistoryWindowCommandExecute(object p) => true;
-        //private void OnOpenHistoryWindowCommandExecute(object p)
-        //{
-        //    HistoryWindow = new HistoryWindow();
-        //    ManagerWindow.Close();
-        //    HistoryWindow.Show();
-        //}
-        
-        //[field:NonSerialized]
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -48,33 +35,19 @@ namespace StartCS_Delegate
 
                 if (args.PropertyName != "ItemSource")
                 {
-                    WriteToFileHistoryLog(propertyName, ID, Email, Surname, Name, Patronymic, NumberPhone, Address);
-                    //MessageWindow messageWindow = new MessageWindow();
-                    //messageWindow.MessageBlock.Text = $"Изменено {propertyName} У клиента {ID} {Email} {Surname} {Name} {Patronymic} {NumberPhone} {Address}";
-                    //messageWindow.Show();
-                    //MessageBox.Show($"Изменено {propertyName} У клиента {ID} {Email} {Surname} {Name} {Patronymic} {NumberPhone} {Address}");
+                    SaveToHistoryLog = WriteToFileHistoryLog;
+                    SaveToHistoryLog(propertyName, ID, Email, Surname, Name, Patronymic, NumberPhone, Address);
+                    //WriteToFileHistoryLog(propertyName, ID, Email, Surname, Name, Patronymic, NumberPhone, Address);
                 }
             }
-
-            //PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            ////NotifyMessage?.Invoke(MessageBox.Show($"Изменено {propertyName}"));
-            //WriteToFileHistoryLog(propertyName, ID, Email, Surname, Name, Patronymic, NumberPhone, Address);
-            //MessageBox.Show($"Изменено {propertyName} У клиента {ID} {Email} {Surname} {Name} {Patronymic} {NumberPhone} {Address}");
-            ////MessageBox.Show($"Изменено {propertyName}");
         }
 
-        //async Task SerializeAsync()
-        //{
-        //    await Task.Run(() => { XmlSerialize(Clients); });
-        //}
-        //await SerializeAsync();
-
-        string path = @"..\Debug\HistoryLog.txt"; //string path = @"..\Debug\Client.xml";
+        string path = @"..\Debug\HistoryLog.txt";
         async void WriteToFileHistoryLog(string propertyName, string ID, string Email, string Name, string Surname, string Patronymic, string NumberPhone, string Address)
         {
             using (StreamWriter  sw = new StreamWriter(path, true)) 
             {
-                await sw.WriteLineAsync($"Изменено {propertyName} У клиента {ID} {Email} {Name} {Surname} {Patronymic} {NumberPhone} {Address}");
+                await sw.WriteLineAsync($"Изменено {propertyName.ToUpper()} У клиента <{ID}>-<{Email}>-<{Name}>-<{Surname}>-<{Patronymic}>-<{NumberPhone}>-<{Address}>");
             }
         }
 
@@ -106,7 +79,7 @@ namespace StartCS_Delegate
             {
                 if (Equals(_Email, value)) return;
                 _Email = value;
-                OnPropertyChanged();
+                OnPropertyChanged("Почта");
             }
         }
 
@@ -117,7 +90,7 @@ namespace StartCS_Delegate
             {
                 if (Equals(_Name, value)) return;
                 _Name = value;
-                OnPropertyChanged();
+                OnPropertyChanged("Имя");
             }
         }
 
@@ -128,7 +101,7 @@ namespace StartCS_Delegate
             {
                 if (Equals(_Surname, value)) return;
                 _Surname = value;
-                OnPropertyChanged();
+                OnPropertyChanged("Фамилия");
             }
         }
 
@@ -139,7 +112,7 @@ namespace StartCS_Delegate
             {
                 if (Equals(_Patronymic, value)) return;
                 _Patronymic = value;
-                OnPropertyChanged();
+                OnPropertyChanged("Отчество");
             }
         }
 
@@ -150,7 +123,7 @@ namespace StartCS_Delegate
             {
                 if (Equals(_NumberPhone, value)) return;
                 _NumberPhone = value;
-                OnPropertyChanged();
+                OnPropertyChanged("Номер телефона");
             }
         }
 
@@ -161,7 +134,7 @@ namespace StartCS_Delegate
             {
                 if (Equals(_Address, value)) return;
                 _Address = value;
-                OnPropertyChanged();
+                OnPropertyChanged("Адрес");
             }
         }
 
@@ -172,7 +145,7 @@ namespace StartCS_Delegate
             {
                 if (Equals(_Bill, value)) return;
                 _Bill = value;
-                OnPropertyChanged();
+                OnPropertyChanged("Счёт");
             }
         }
 
@@ -183,7 +156,7 @@ namespace StartCS_Delegate
             {
                 if (Equals(_DepBill, value)) return;
                 _DepBill = value;
-                OnPropertyChanged();
+                OnPropertyChanged("Депозитный счёт");
             }
         }
 
@@ -201,8 +174,6 @@ namespace StartCS_Delegate
             Address = address;
             Bill = bill;
             DepBill = depBill;
-
-            //OpenHistoryWindowCommand = new LambdaCommand(OnOpenHistoryWindowCommandExecute, CanOpenHistoryWindowCommandExecute);
         }
 
         public override string ToString() 
